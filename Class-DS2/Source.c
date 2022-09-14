@@ -12,6 +12,19 @@ typedef struct array
 
 } ARRAY;
 
+typedef struct node
+{
+	element data;
+	struct node* next;
+} NODE;
+
+typedef struct list
+{
+	NODE* head;
+	NODE* tail;
+	size_t size;
+} LIST;
+
 void create_array(ARRAY** array, size_t size)
 {
 	*array = (ARRAY*)malloc(sizeof(ARRAY));
@@ -38,12 +51,66 @@ void delete_array(ARRAY* array, size_t index)
 	}
 }
 
+void create_list(LIST** list)
+{
+	*list = (LIST*)malloc(sizeof(LIST));
+	(*list)->head = (NODE*)malloc(sizeof(NODE));
+	(*list)->tail = (NODE*)malloc(sizeof(NODE));
+	(*list)->head->next = (*list)->tail;
+	(*list)->tail->next = NULL;
+}
+
+void insert_list(LIST* list, size_t index, element data)
+{
+	if (index >= 0 && index <= list->size)
+	{
+		NODE* loc = list->head;
+
+		for (int i = 0; i < index; i++)
+		{
+			loc = loc->next;
+		}
+		NODE* new_node = (NODE*)malloc(sizeof(NODE));
+
+		new_node->data = data;
+		new_node->next = loc->next;
+		loc->next = new_node;
+		
+		list->size++;
+	}
+}
+
+void delete_list(LIST* list, size_t index)
+{
+	if (index >= 0 && index < list->size)
+	{
+		NODE* loc = list->head;
+
+		for (int i = 0; i < index; i++)
+		{
+			loc = loc->next;
+		}
+		NODE* next = loc->next->next;
+
+		free(loc->next);
+		loc->next = next;
+
+		list->size--;
+	}
+}
+
 int main()
 {
 	ARRAY* array = NULL;
 	create_array(&array, 10);
 	for (int i = 0; i < 10; i++)
 		insert_array(array, 0, i);
-	delete_array(array, 0);
+	delete_array(array, 1);
 	// a
+
+	LIST* list = NULL;
+	create_list(&list);
+	for (int i = 0; i < 10; i++)
+		insert_list(list, 0, i);
+	delete_list(list, 1);
 }
