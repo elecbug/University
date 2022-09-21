@@ -24,6 +24,7 @@ void insert_front(NODE* head, element data)
 		head->next->data = data;
 		head->next->prev = head;
 		head->next->next = NULL;
+		head->prev = head->next;
 	}
 	else // 그 외의 경우 앞에서 원소 삽입
 	{
@@ -71,22 +72,20 @@ void show(NODE* head)
 int main()
 {
 	NODE* head1 = (NODE*)malloc(sizeof(NODE));
-	NODE* head2 = (NODE*)malloc(sizeof(NODE));
 
 	init(head1);
-	init(head2);
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		insert_front(head1, i);
 		show(head1);
 		printf("\n");
 	}
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		insert_last(head2, i);
-		show(head2);
+		insert_last(head1, i);
+		show(head1);
 		printf("\n");
 	}
 }
