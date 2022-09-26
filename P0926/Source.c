@@ -158,9 +158,19 @@ void iterative_postorder(TreeNode* head)
 			top->next = top->next->next;
 			free(del);
 		}
-		if (top->next->data == head->right)
+		if (top->next != NULL && head->right == top->next->data)
 		{
-			head = head->right;
+			StackNode* temp = head;
+
+			head = top->next->data;
+			StackNode* del = top->next;
+			top->next = top->next->next;
+			free(del);
+
+			StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
+			new_node->next = top->next;
+			new_node->data = temp;
+			top->next = new_node;
 		}
 		else
 		{
