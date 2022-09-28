@@ -36,4 +36,4 @@ class D0926P01
 		scanner.close();
 	}
 }
-
+ 
