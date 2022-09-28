@@ -53,10 +53,33 @@ void recursive_postorder(TreeNode* head)
 	}
 }
 
-void iterative_preorder(TreeNode* head)
+StackNode* create_stack()
 {
 	StackNode* top = (StackNode*)malloc(sizeof(StackNode));
 	top->next = NULL;
+	return top;
+}
+
+void push(StackNode* top, TreeNode* data)
+{
+	StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
+	new_node->next = top->next;
+	new_node->data = data;
+	top->next = new_node;
+}
+
+TreeNode* pop(StackNode* top)
+{
+	StackNode* result = top->next->data;
+	StackNode* del = top->next;
+	top->next = top->next->next;
+	free(del);
+	return result;
+}
+
+void iterative_preorder(TreeNode* head)
+{
+	StackNode* top = create_stack();
 
 	while (1)
 	{
@@ -64,10 +87,7 @@ void iterative_preorder(TreeNode* head)
 		{
 			printf("%d - ", head->data);
 
-			StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
-			new_node->next = top->next;
-			new_node->data = head;
-			top->next = new_node;
+			push(top, head);
 
 			head = head->left;
 		}
@@ -77,10 +97,7 @@ void iterative_preorder(TreeNode* head)
 		}
 		else
 		{
-			head = top->next->data;
-			StackNode* del = top->next;
-			top->next = top->next->next;
-			free(del);
+			head = pop(top);
 
 			head = head->right;
 		}
@@ -90,17 +107,13 @@ void iterative_preorder(TreeNode* head)
 
 void iterative_inorder(TreeNode* head)
 {
-	StackNode* top = (StackNode*)malloc(sizeof(StackNode));
-	top->next = NULL;
+	StackNode* top = create_stack();
 
 	while (1)
 	{
 		while (head != NULL)
 		{
-			StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
-			new_node->next = top->next;
-			new_node->data = head;
-			top->next = new_node;
+			push(top, head);
 
 			head = head->left;		
 		}
@@ -110,10 +123,7 @@ void iterative_inorder(TreeNode* head)
 		}
 		else
 		{
-			head = top->next->data;
-			StackNode* del = top->next;
-			top->next = top->next->next;
-			free(del);
+			head = pop(top);
 
 			printf("%d - ", head->data);
 
@@ -125,8 +135,7 @@ void iterative_inorder(TreeNode* head)
 
 void iterative_postorder(TreeNode* head)
 {
-	StackNode* top = (StackNode*)malloc(sizeof(StackNode));
-	top->next = NULL;
+	StackNode* top = create_stack();
 
 	while (1)
 	{
@@ -134,16 +143,10 @@ void iterative_postorder(TreeNode* head)
 		{
 			if (head->right != NULL)
 			{
-				StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
-				new_node->next = top->next;
-				new_node->data = head->right;
-				top->next = new_node;
+				push(top, head->right);
 			}
 
-			StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
-			new_node->next = top->next;
-			new_node->data = head;
-			top->next = new_node;
+			push(top, head);
 
 			head = head->left;
 		}
@@ -153,24 +156,15 @@ void iterative_postorder(TreeNode* head)
 		}
 		else
 		{
-			head = top->next->data;
-			StackNode* del = top->next;
-			top->next = top->next->next;
-			free(del);
+			head = pop(top);
 		}
 		if (top->next != NULL && head->right == top->next->data)
 		{
 			StackNode* temp = head;
 
-			head = top->next->data;
-			StackNode* del = top->next;
-			top->next = top->next->next;
-			free(del);
+			head = pop(top);
 
-			StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
-			new_node->next = top->next;
-			new_node->data = temp;
-			top->next = new_node;
+			push(top, temp);
 		}
 		else
 		{
@@ -183,16 +177,16 @@ void iterative_postorder(TreeNode* head)
 
 int main()
 {
-	TreeNode* head = create_node(0);
+	TreeNode* head = create_node(1);
 
-	make_complete_binary_tree(head, create_node(1));
 	make_complete_binary_tree(head, create_node(2));
+	make_complete_binary_tree(head, create_node(3));
 
-	make_complete_binary_tree(head->left, create_node(3));
 	make_complete_binary_tree(head->left, create_node(4));
+	make_complete_binary_tree(head->left, create_node(5));
 
-	make_complete_binary_tree(head->right, create_node(5));
 	make_complete_binary_tree(head->right, create_node(6));
+	make_complete_binary_tree(head->right, create_node(7));
 
 	recursive_preorder(head);
 	printf("\n");
