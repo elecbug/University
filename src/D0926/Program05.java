@@ -1,7 +1,7 @@
 package D0926;
 import java.util.Scanner;
 
-public class Progarm05 
+public class Program05 
 {
 	public static void main(String[ ] argc) 
 	{
