@@ -1,6 +1,7 @@
+package D0926;
 import java.util.Scanner;
 
-class D0926P01
+class Program01
 {
 	int width;
 	int height;
@@ -27,7 +28,7 @@ class D0926P01
 		width = scanner.nextInt();
 		height = scanner.nextInt();
 		
-		D0926P01 r1 = new D0926P01();
+		Program01 r1 = new Program01();
 		r1.width = width;
 		r1.height = height;
 		

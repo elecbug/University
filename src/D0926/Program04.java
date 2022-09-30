@@ -1,6 +1,7 @@
+package D0926;
 import java.util.Scanner;
 
-public class D0926P04 
+public class Program04 
 {
 	public static void main(String[] args) 
 	{

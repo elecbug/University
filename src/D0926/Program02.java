@@ -1,33 +1,7 @@
+package D0926;
 import java.util.Scanner;
 
-class Rectangle
-{
-	int width;
-	int height;
-	
-	public Rectangle(int width, int height)
-	{
-		this.width = width;
-		this.height = height;
-	}
-	
-	public int getWidth()
-	{
-		return this.width;
-	}
-	
-	public int getHeight()
-	{
-		return this.height;
-	}
-	
-	public int getArea()
-	{
-		return this.width * this.height;
-	}
-}
-
-public class D0926P02
+public class Program02
 {
 	public static void main(String[] args) 
 	{
