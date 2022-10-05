@@ -6,4 +6,10 @@ public class Professor extends People
     {
         super(name, major, schoolNum, phoneNum);
     }
+
+    public String toString()
+    {
+        return "이름: " + getName() + ", 학과" 
+            + getMajor() + ", 전화번호: " + getPhoneNum();
+    }
 }

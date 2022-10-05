@@ -17,19 +17,9 @@ public class People
         this.classes = new Class[0];
     }
 
-    public void setSchoolNum(int schoolNum)
-    {
-        this.schoolNum = schoolNum;
-    }
-
     public int getSchoolNum()
     {
         return this.schoolNum;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
     }
 
     public String getName()
@@ -37,34 +27,14 @@ public class People
         return this.name;
     }
 
-    public void setMajor(String major)
-    {
-        this.major = major;
-    }
-
     public String getMajor()
     {
         return this.major;
     }
 
-    public void setPhoneNum(String phoneNum)
-    {
-        this.phoneNum = phoneNum;
-    }
-
     public String getPhoneNum()
     {
         return this.phoneNum;
-    }
-
-    public void setClass(Class _class, int index)
-    {
-        this.classes[index] = _class;
-    }
-
-    public Class getClass(int index) 
-    {
-        return this.classes[index];
     }
 
     public void addClass(Class _class)

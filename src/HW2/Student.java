@@ -10,11 +10,6 @@ public class Student extends People
         this.nTh = nTh;
     }
 
-    public void setNTh(int nTh)
-    {
-        this.nTh = nTh;
-    }
-
     public int getNth()
     {
         return this.nTh;
@@ -22,6 +17,13 @@ public class Student extends People
     
     public String toString()
     {
-        return "학생 정보: " + this.getName() + " " + this.getSchoolNum() + " "  + this.getMajor() + " "  + this.getNth();
+        return "학번: " + getSchoolNum() + ", 이름: " + getName() + ", 학과" 
+            + getMajor() + ", 학년" + getNth() + ", 전화번호: " + getPhoneNum();
+    }
+
+    public String toString(int num)
+    {
+        return num + "번: 이름: " + getName() + ", 학번: " + getSchoolNum() + ", 전공:  "  
+            + getMajor() + ", 학년: "  + getNth();
     }
 }

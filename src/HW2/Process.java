@@ -17,6 +17,7 @@ public class Process
 
     public void Run()
     {
+        // initialize level
         Scanner scanner = new Scanner(System.in);
 
         for (int i = 0; i < 10; i++)
@@ -35,10 +36,11 @@ public class Process
             this.classes[i] = new Class(scanner.nextInt(), scanner.nextInt(), scanner.next(), scanner.nextInt());
             
             int index = -1;
-            for (; index == -1;)
+            while (index == -1)
             {
                 System.out.println("해당 강좌의 교수님 사번을 입력하세요.");
                 index = findProfessor(scanner.nextInt());
+                
                 if (index == -1)
                 {
                     System.out.println("교수님 정보가 잘못되었습니다.");
@@ -48,20 +50,24 @@ public class Process
             this.profs[index].addClass(this.classes[i]);
         }
 
-        int mode = 0;
-        while (mode != 3)
+        // use level
+        final int RETRY = 0, STUDENT = 1, PROFESSOR = 2, EXIT = 3, APPLY_CLASS = 4, CHECK_CLASS = 5;
+
+        int mode = RETRY;
+        while (mode != EXIT)
         {
-            for (; mode == 0; )
+            while (mode == RETRY)
             {
                 System.out.println("접속 모드를 선택하세요.\n1. 학생 모드\n2. 교수 모드\n3. 종료");
                 switch(scanner.nextInt())
                 {
-                    case 1: mode = 1; break;
-                    case 2: mode = 2; break;
-                    case 3: mode = 3; break;
-                    default: mode = 0; break;
+                    case 1: mode = STUDENT; break;
+                    case 2: mode = PROFESSOR; break;
+                    case 3: mode = EXIT; break;
+                    default: mode = RETRY; break;
                 }
-                if (mode == 0)
+                
+                if (mode == RETRY)
                 {
                     System.out.println("숫자가 잘못되었습니다.");
                 }
@@ -69,30 +75,32 @@ public class Process
 
             switch(mode)
             {
-                case 1:
+                case STUDENT:
                 {
-                    for (; mode == 1; )
+                    while (mode == STUDENT)
                     {
                         System.out.println("할 일을 선택하세요.\n1. 수강 신청\n2. 수강 확인");
                         switch(scanner.nextInt())
                         {
-                            case 1: mode = 4; break;
-                            case 2: mode = 5; break;
-                            default: mode = 1; break;
+                            case 1: mode = APPLY_CLASS; break;
+                            case 2: mode = CHECK_CLASS; break;
+                            default: mode = STUDENT; break;
                         }
-                        if (mode == 1)
+                      
+                        if (mode == STUDENT)
                         {
                             System.out.println("숫자가 잘못되었습니다.");
                         }
                     } 
 
-                    if (mode == 4)
+                    if (mode == APPLY_CLASS)
                     {
                         int index = -1;
-                        for (; index == -1; )
+                        while (index == -1)
                         {
                             System.out.println("학생의 학번을 입력하세요.");
                             index = findStudent(scanner.nextInt());
+                           
                             if (index == -1)
                             {
                                 System.out.println("학생 정보가 잘못되었습니다.");
@@ -104,10 +112,11 @@ public class Process
                         for (int i = 0 ; i < 3; i++)
                         {
                             index = -1;
-                            for (; index == -1; )
+                            while (index == -1)
                             {
                                 System.out.println("강좌 번호를 입력하세요.");
                                 index = findClass(scanner.nextInt());
+                               
                                 if (index == -1)
                                 {
                                     System.out.println("강좌 정보가 잘못되었습니다.");
@@ -118,13 +127,14 @@ public class Process
                         }
 
                     }
-                    else if (mode == 5)
+                    else if (mode == CHECK_CLASS)
                     {
                         int index = -1;
-                        for (; index == -1; System.out.println("학생 정보가 잘못되었습니다."))
+                        while (index == -1)
                         {
                             System.out.println("학생의 학번을 입력하세요.");
                             index = findStudent(scanner.nextInt());
+                            
                             if (index == -1)
                             {
                                 System.out.println("학생 정보가 잘못되었습니다.");
@@ -132,85 +142,74 @@ public class Process
                         }
 
                         Student student = this.students[index];
-                        
+                        int gradeSum = 0;
+
+                        System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록\n");
                         for (int i = 0; i < this.classes.length; i++)
                         {
                             if (student.findClass(this.classes[i]))
                             {
-                                System.out.println(this.classes[i].toString());
+                                System.out.print(this.classes[i].toString() + ", 담당 교수: " );
+                                
+                                for (int j = 0; j < this.profs.length; j++)
+                                {
+                                    if (this.profs[j].findClass(this.classes[i]))
+                                    {
+                                        System.out.println(this.profs[j].getName());
+                                    }
+                                }
+
+                                gradeSum += this.classes[i].getGrade();
                             }
                         }
+                        System.out.println("총 신청 학점: " + gradeSum);
                     }
 
-                    mode = 0;
-                } break;
-                case 2:
+                    mode = RETRY;
+                } 
+                break;
+
+                case PROFESSOR:
                 {
                     int index = -1;
-                    for (; index == -1;)
+                    while (index == -1)
                     {
-                        System.out.println("해당 강좌의 강좌번호를 입력하세요.");
+                        System.out.println("해당 강좌의 강좌 번호를 입력하세요.");
                         index = findClass(scanner.nextInt());
+                        
                         if (index == -1)
                         {
-                            System.out.println("강좌번호가 잘못되었습니다.");
+                            System.out.println("강좌 정보가 잘못되었습니다.");
                         }
                     }
 
                     Class _class = this.classes[index];
-                        
+                    String list = "수강자 목록\n";
+                    int sNum = 0;
+
+                    for (int i = 0; i < this.profs.length; i++)
+                    {
+                        if (this.profs[i].findClass(_class))
+                        {
+                            System.out.println("담당 교수: " + this.profs[i].toString());
+                        }
+                    }
                     for (int i = 0; i < this.students.length; i++)
                     {
                         if (this.students[i].findClass(_class))
                         {
-                            System.out.println(this.students[i].toString());
+                            list += this.students[i].toString(++sNum) + "\n";
                         }
                     }
-                    
-                    mode = 0;
-                } break;
-                
+                    System.out.println("수강 인원: " + sNum + "\n" + list);
+
+                    mode = RETRY;
+                } 
+                break;
             }
         }
-    }
 
-    public void addProfessor(Professor prof)
-    {
-        Professor[] result = new Professor[this.profs.length + 1];
-        
-        for (int i = 0; i < this.profs.length; i++)
-        {
-            result[i] = this.profs[i];
-        }
-        result[result.length - 1] = prof;
-
-        this.profs = result;
-    }
-
-    public void addStudent(Student student)
-    {
-        Student[] result = new Student[this.students.length + 1];
-        
-        for (int i = 0; i < this.students.length; i++)
-        {
-            result[i] = this.students[i];
-        }
-        result[result.length - 1] = student;
-
-        this.students = result;
-    }
-
-    public void addClass(Class _class)
-    {
-        Class[] result = new Class[this.classes.length + 1];
-        
-        for (int i = 0; i < this.classes.length; i++)
-        {
-            result[i] = this.classes[i];
-        }
-        result[result.length - 1] = _class;
-
-        this.classes = result;
+        scanner.close();
     }
 
     public int findProfessor(int schoolNum)

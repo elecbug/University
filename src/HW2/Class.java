@@ -20,8 +20,13 @@ public class Class
         return this.classNum;
     }
 
+    public int getGrade()
+    {
+        return this.grade;
+    }
+
     public String toString()
     {
-        return "년도: " + this.year + "\n강좌번호: " + this.classNum + "\n강좌이름: " + this.name + "\n학점: " + this.grade;
+        return this.year + "학년도, 강좌번호: " + this.classNum + ", " + this.name + "강의, " + this.grade + "학점";
     }
 }
