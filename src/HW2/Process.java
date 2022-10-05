@@ -75,6 +75,7 @@ public class Process
 
             switch(mode)
             {
+                // if used student
                 case STUDENT:
                 {
                     while (mode == STUDENT)
@@ -142,15 +143,14 @@ public class Process
                         }
 
                         Student student = this.students[index];
-                        int gradeSum = 0;
 
-                        System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록\n");
+                        System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록");
                         for (int i = 0; i < this.classes.length; i++)
                         {
                             if (student.findClass(this.classes[i]))
                             {
-                                System.out.print(this.classes[i].toString() + ", 담당 교수: " );
-                                
+                                System.out.print(this.classes[i].toString() + ", 담당 교수: ");
+
                                 for (int j = 0; j < this.profs.length; j++)
                                 {
                                     if (this.profs[j].findClass(this.classes[i]))
@@ -158,17 +158,16 @@ public class Process
                                         System.out.println(this.profs[j].getName());
                                     }
                                 }
-
-                                gradeSum += this.classes[i].getGrade();
                             }
                         }
-                        System.out.println("총 신청 학점: " + gradeSum);
+                        System.out.println("총 신청 학점: " + student.getGradeSum());
                     }
 
                     mode = RETRY;
                 } 
                 break;
 
+                // if used professor
                 case PROFESSOR:
                 {
                     int index = -1;

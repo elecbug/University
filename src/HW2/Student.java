@@ -26,4 +26,16 @@ public class Student extends People
         return num + "번: 이름: " + getName() + ", 학번: " + getSchoolNum() + ", 전공:  "  
             + getMajor() + ", 학년: "  + getNth();
     }
+
+    public int getGradeSum()
+    {
+        int result = 0;
+
+        for (int i = 0; i < getClasses().length; i++)
+        {
+            result += getClasses()[i].getGrade();
+        }
+
+        return result;
+    }
 }

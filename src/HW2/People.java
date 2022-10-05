@@ -39,6 +39,11 @@ public class People
 
     public void addClass(Class _class)
     {
+        if (findClass(_class))
+        {
+            return;
+        }
+        
         Class[] result = new Class[this.classes.length + 1];
         
         for (int i = 0; i < this.classes.length; i++)
@@ -61,5 +66,10 @@ public class People
         }
 
         return false;
+    }
+
+    protected Class[] getClasses()
+    {
+        return this.classes;
     }
 }
