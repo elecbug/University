@@ -1,6 +1,6 @@
-package D1004;
+package D1005;
 
-public class Program01 
+public class Program02 
 {
     public static void main(String[] args)
     {
