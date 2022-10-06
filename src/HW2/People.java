@@ -37,7 +37,7 @@ public class People
         return this.phoneNum;
     }
 
-    public void addSubject(Subject subject) {}
+    public void addSubject(Subject subject) {/* Override */}
 
     public boolean findSubject(Subject subject)
     {
