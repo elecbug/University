@@ -6,13 +6,13 @@ public class Process
 {
     private Professor[] profs;
     private Student[] students;
-    private Class[] classes;
+    private Subject[] subjects;
     
     public Process() 
     {
         this.profs = new Professor[3];
         this.students = new Student[10];
-        this.classes = new Class[5];
+        this.subjects = new Subject[5];
     }
 
     public void Run()
@@ -33,13 +33,13 @@ public class Process
         for (int i = 0 ; i < 5; i++)
         {
             System.out.println((i + 1) + "번째 수업의 정보를 입력하세요(년도, 강좌번호, 강좌이름, 학점)");
-            this.classes[i] = new Class(scanner.nextInt(), scanner.nextInt(), scanner.next(), scanner.nextInt());
+            this.subjects[i] = new Subject(scanner.nextInt(), scanner.nextInt(), scanner.next(), scanner.nextInt());
             
             int index = -1;
             while (index == -1)
             {
                 System.out.println("해당 강좌의 교수님 사번을 입력하세요.");
-                index = findProfessor(scanner.nextInt());
+                index = findProfessorIndex(scanner.nextInt());
                 
                 if (index == -1)
                 {
@@ -47,7 +47,7 @@ public class Process
                 }
             }
 
-            this.profs[index].addClass(this.classes[i]);
+            this.profs[index].addSubject(this.subjects[i]);
         }
 
         // use level
@@ -100,7 +100,7 @@ public class Process
                         while (index == -1)
                         {
                             System.out.println("학생의 학번을 입력하세요.");
-                            index = findStudent(scanner.nextInt());
+                            index = findStudentIndex(scanner.nextInt());
                            
                             if (index == -1)
                             {
@@ -116,7 +116,7 @@ public class Process
                             while (index == -1)
                             {
                                 System.out.println("강좌 번호를 입력하세요.");
-                                index = findClass(scanner.nextInt());
+                                index = findSubjectIndex(scanner.nextInt());
                                
                                 if (index == -1)
                                 {
@@ -124,7 +124,7 @@ public class Process
                                 }
                             }
 
-                            student.addClass(this.classes[index]);
+                            student.addSubject(this.subjects[index]);
                         }
 
                     }
@@ -134,7 +134,7 @@ public class Process
                         while (index == -1)
                         {
                             System.out.println("학생의 학번을 입력하세요.");
-                            index = findStudent(scanner.nextInt());
+                            index = findStudentIndex(scanner.nextInt());
                             
                             if (index == -1)
                             {
@@ -145,19 +145,12 @@ public class Process
                         Student student = this.students[index];
 
                         System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록");
-                        for (int i = 0; i < this.classes.length; i++)
+                        for (int i = 0; i < this.subjects.length; i++)
                         {
-                            if (student.findClass(this.classes[i]))
+                            if (this.subjects[i].findStudent(student))
                             {
-                                System.out.print(this.classes[i].toString() + ", 담당 교수: ");
-
-                                for (int j = 0; j < this.profs.length; j++)
-                                {
-                                    if (this.profs[j].findClass(this.classes[i]))
-                                    {
-                                        System.out.println(this.profs[j].getName());
-                                    }
-                                }
+                                System.out.println(this.subjects[i].toString() + ", 담당 교수: " 
+                                    + this.subjects[i].getProfessor().getName()); 
                             }
                         }
                         System.out.println("총 신청 학점: " + student.getGradeSum());
@@ -174,7 +167,7 @@ public class Process
                     while (index == -1)
                     {
                         System.out.println("해당 강좌의 강좌 번호를 입력하세요.");
-                        index = findClass(scanner.nextInt());
+                        index = findSubjectIndex(scanner.nextInt());
                         
                         if (index == -1)
                         {
@@ -182,20 +175,15 @@ public class Process
                         }
                     }
 
-                    Class _class = this.classes[index];
+                    Subject subject = this.subjects[index];
                     String list = "수강자 목록\n";
                     int sNum = 0;
 
-                    for (int i = 0; i < this.profs.length; i++)
-                    {
-                        if (this.profs[i].findClass(_class))
-                        {
-                            System.out.println("담당 교수: " + this.profs[i].toString());
-                        }
-                    }
+                    System.out.println("담당 교수: " + subject.getProfessor());
+
                     for (int i = 0; i < this.students.length; i++)
                     {
-                        if (this.students[i].findClass(_class))
+                        if (this.students[i].findSubject(subject))
                         {
                             list += this.students[i].toString(++sNum) + "\n";
                         }
@@ -211,7 +199,7 @@ public class Process
         scanner.close();
     }
 
-    public int findProfessor(int schoolNum)
+    public int findProfessorIndex(int schoolNum)
     {
         for (int i = 0; i < this.profs.length; i++)
         {
@@ -224,7 +212,7 @@ public class Process
         return -1;
     }
 
-    public int findStudent(int schoolNum)
+    public int findStudentIndex(int schoolNum)
     {
         for (int i = 0; i < this.students.length; i++)
         {
@@ -237,11 +225,11 @@ public class Process
         return -1;
     }
 
-    public int findClass(int classNum)
+    public int findSubjectIndex(int subjectNum)
     {
-        for (int i = 0; i < this.classes.length; i++)
+        for (int i = 0; i < this.subjects.length; i++)
         {
-            if (this.classes[i].getClassNum() == classNum)
+            if (this.subjects[i].getSubjectNum() == subjectNum)
             {
                 return i;
             }

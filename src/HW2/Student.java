@@ -17,7 +17,7 @@ public class Student extends People
     
     public String toString()
     {
-        return "학번: " + getSchoolNum() + ", 이름: " + getName() + ", 학과" 
+        return "학번: " + getSchoolNum() + ", 이름: " + getName() + ", 학과: " 
             + getMajor() + ", 학년" + getNth() + ", 전화번호: " + getPhoneNum();
     }
 
@@ -31,11 +31,32 @@ public class Student extends People
     {
         int result = 0;
 
-        for (int i = 0; i < getClasses().length; i++)
+        for (int i = 0; i < getSubjects().length; i++)
         {
-            result += getClasses()[i].getGrade();
+            result += getSubjects()[i].getGrade();
         }
 
         return result;
+    }
+
+    @Override
+    public void addSubject(Subject subject)
+    {
+        if (findSubject(subject))
+        {
+            return;
+        }
+        
+        Subject[] result = new Subject[this.getSubjects().length + 1];
+        
+        for (int i = 0; i < this.getSubjects().length; i++)
+        {
+            result[i] = this.getSubjects()[i];
+        }
+        result[result.length - 1] = subject;
+
+        this.setSubjects(result);
+
+        subject.addStudent(this);
     }
 }

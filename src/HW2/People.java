@@ -6,7 +6,7 @@ public class People
     private String name;
     private String major;
     private String phoneNum;  
-    private Class[] classes; 
+    private Subject[] subjects; 
 
     public People(String name, String major, int schoolNum, String phoneNum)
     {
@@ -14,7 +14,7 @@ public class People
         this.major = major;
         this.schoolNum = schoolNum;
         this.phoneNum = phoneNum;
-        this.classes = new Class[0];
+        this.subjects = new Subject[0];
     }
 
     public int getSchoolNum()
@@ -37,29 +37,13 @@ public class People
         return this.phoneNum;
     }
 
-    public void addClass(Class _class)
-    {
-        if (findClass(_class))
-        {
-            return;
-        }
-        
-        Class[] result = new Class[this.classes.length + 1];
-        
-        for (int i = 0; i < this.classes.length; i++)
-        {
-            result[i] = this.classes[i];
-        }
-        result[result.length - 1] = _class;
+    public void addSubject(Subject subject) {}
 
-        this.classes = result;
-    }
-
-    public boolean findClass(Class _class)
+    public boolean findSubject(Subject subject)
     {
-        for (int i = 0; i < this.classes.length; i++)
+        for (int i = 0; i < this.subjects.length; i++)
         {
-            if (this.classes[i] == _class)
+            if (this.subjects[i] == subject)
             {
                 return true;
             }
@@ -68,8 +52,13 @@ public class People
         return false;
     }
 
-    protected Class[] getClasses()
+    protected Subject[] getSubjects()
     {
-        return this.classes;
+        return this.subjects;
+    }
+
+    protected void setSubjects(Subject[] subjects)
+    {
+        this.subjects = subjects;
     }
 }
