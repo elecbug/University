@@ -4,6 +4,9 @@ import java.util.Scanner;
 
 public class Process 
 {
+    private Scanner scanner;
+    private final int RETRY = 0, STUDENT = 1, PROFESSOR = 2, EXIT = 3, APPLY_CLASS = 4, CHECK_CLASS = 5;
+
     private Professor[] profs;
     private Student[] students;
     private Subject[] subjects;
@@ -18,188 +21,280 @@ public class Process
     public void Run()
     {
         // initialize level
-        Scanner scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in);
 
-        for (int i = 0; i < 10; i++)
-        {
-            System.out.println((i + 1) + "번째 학생의 정보를 입력하세요(이름, 전공, 학생번호, 전화번호, 학년)");
-            this.students[i] = new Student(scanner.next(), scanner.next(), scanner.nextInt(), scanner.next(), scanner.nextInt());
-        }
-        for (int i = 0 ; i < 3; i++)
-        {
-            System.out.println((i + 1) + "번째 교수의 정보를 입력하세요(이름, 전공, 교수번호, 전화번호)");
-            this.profs[i] = new Professor(scanner.next(), scanner.next(), scanner.nextInt(), scanner.next());
-        }
-        for (int i = 0 ; i < 5; i++)
-        {
-            System.out.println((i + 1) + "번째 수업의 정보를 입력하세요(년도, 강좌번호, 강좌이름, 학점)");
-            this.subjects[i] = new Subject(scanner.nextInt(), scanner.nextInt(), scanner.next(), scanner.nextInt());
-            
-            int index = -1;
-            while (index == -1)
-            {
-                System.out.println("해당 강좌의 교수님 사번을 입력하세요.");
-                index = findProfessorIndex(scanner.nextInt());
-                
-                if (index == -1)
-                {
-                    System.out.println("교수님 정보가 잘못되었습니다.");
-                }
-            }
-
-            this.profs[index].addSubject(this.subjects[i]);
-        }
+        inputStudents();
+        inputProfessors();
+        inputSubjects();
 
         // use level
-        final int RETRY = 0, STUDENT = 1, PROFESSOR = 2, EXIT = 3, APPLY_CLASS = 4, CHECK_CLASS = 5;
-
         int mode = RETRY;
         while (mode != EXIT)
         {
+            mode = RETRY;
+
             while (mode == RETRY)
             {
-                System.out.println("접속 모드를 선택하세요.\n1. 학생 모드\n2. 교수 모드\n3. 종료");
-                switch(scanner.nextInt())
+                try
                 {
-                    case 1: mode = STUDENT; break;
-                    case 2: mode = PROFESSOR; break;
-                    case 3: mode = EXIT; break;
-                    default: mode = RETRY; break;
+                    System.out.println("접속 모드를 선택하세요.\n1. 학생 모드\n2. 교수 모드\n3. 종료");
+                    switch(this.scanner.nextInt())
+                    {
+                        case 1: mode = STUDENT; break;
+                        case 2: mode = PROFESSOR; break;
+                        case 3: mode = EXIT; break;
+                        default: mode = RETRY; break;
+                    }
                 }
-                
+                catch(Exception e)
+                {
+                    mode = RETRY;
+                }
                 if (mode == RETRY)
                 {
                     System.out.println("숫자가 잘못되었습니다.");
                 }
             }
 
-            switch(mode)
+            modeRun(mode);
+        }
+
+        this.scanner.close();
+    }
+
+    private void inputStudents()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            while (true)
             {
-                // if used student
-                case STUDENT:
+                try
                 {
-                    while (mode == STUDENT)
-                    {
-                        System.out.println("할 일을 선택하세요.\n1. 수강 신청\n2. 수강 확인");
-                        switch(scanner.nextInt())
-                        {
-                            case 1: mode = APPLY_CLASS; break;
-                            case 2: mode = CHECK_CLASS; break;
-                            default: mode = STUDENT; break;
-                        }
-                      
-                        if (mode == STUDENT)
-                        {
-                            System.out.println("숫자가 잘못되었습니다.");
-                        }
-                    } 
+                    System.out.println((i + 1) + "번째 학생의 정보를 입력하세요(이름, 전공, 학생번호, 전화번호, 학년)");
+                    this.students[i] = new Student(this.scanner.next(), this.scanner.next(), this.scanner.nextInt(), 
+                        this.scanner.next(), this.scanner.nextInt());
 
-                    if (mode == APPLY_CLASS)
-                    {
-                        int index = -1;
-                        while (index == -1)
-                        {
-                            System.out.println("학생의 학번을 입력하세요.");
-                            index = findStudentIndex(scanner.nextInt());
-                           
-                            if (index == -1)
-                            {
-                                System.out.println("학생 정보가 잘못되었습니다.");
-                            }
-                        }
-
-                        Student student = this.students[index];
-                        
-                        for (int i = 0 ; i < 3; i++)
-                        {
-                            index = -1;
-                            while (index == -1)
-                            {
-                                System.out.println("강좌 번호를 입력하세요.");
-                                index = findSubjectIndex(scanner.nextInt());
-                               
-                                if (index == -1)
-                                {
-                                    System.out.println("강좌 정보가 잘못되었습니다.");
-                                }
-                            }
-
-                            student.addSubject(this.subjects[index]);
-                        }
-
-                    }
-                    else if (mode == CHECK_CLASS)
-                    {
-                        int index = -1;
-                        while (index == -1)
-                        {
-                            System.out.println("학생의 학번을 입력하세요.");
-                            index = findStudentIndex(scanner.nextInt());
-                            
-                            if (index == -1)
-                            {
-                                System.out.println("학생 정보가 잘못되었습니다.");
-                            }
-                        }
-
-                        Student student = this.students[index];
-
-                        System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록");
-                        for (int i = 0; i < this.subjects.length; i++)
-                        {
-                            if (this.subjects[i].findStudent(student))
-                            {
-                                System.out.println(this.subjects[i].toString() + ", 담당 교수: " 
-                                    + this.subjects[i].getProfessor().getName()); 
-                            }
-                        }
-                        System.out.println("총 신청 학점: " + student.getGradeSum());
-                    }
-
-                    mode = RETRY;
-                } 
-                break;
-
-                // if used professor
-                case PROFESSOR:
+                    break;
+                }
+                catch (Exception e)
                 {
+                    System.out.println("학생 정보가 잘못되었습니다.");
+                    continue;
+                }
+            }
+        }
+    }
+
+    private void inputProfessors()
+    {
+        for (int i = 0 ; i < 3; i++)
+        {
+            while (true)
+            {
+                try
+                {
+                    System.out.println((i + 1) + "번째 교수의 정보를 입력하세요(이름, 전공, 교수번호, 전화번호)");
+                    this.profs[i] = new Professor(this.scanner.next(), this.scanner.next(), 
+                        this.scanner.nextInt(), this.scanner.next());
+        
+                    break;
+                }
+                catch (Exception e)
+                {
+                    System.out.println("교수 정보가 잘못되었습니다.");
+                    continue;
+                }
+
+            }
+        }
+    }
+    
+    private void inputSubjects()
+    {
+        for (int i = 0 ; i < 5; i++)
+        {
+            while (true)
+            {
+                try
+                {
+                    System.out.println((i + 1) + "번째 수업의 정보를 입력하세요(년도, 강좌번호, 강좌이름, 학점)");
+                    this.subjects[i] = new Subject(this.scanner.nextInt(), this.scanner.nextInt(), this.scanner.next(), this.scanner.nextInt());
+                    
                     int index = -1;
                     while (index == -1)
                     {
-                        System.out.println("해당 강좌의 강좌 번호를 입력하세요.");
-                        index = findSubjectIndex(scanner.nextInt());
+                        System.out.println("해당 강좌의 교수님 사번을 입력하세요.");
+                        index = findProfessorIndex(this.scanner.nextInt());
                         
                         if (index == -1)
                         {
-                            System.out.println("강좌 정보가 잘못되었습니다.");
+                            System.out.println("교수 정보가 잘못되었습니다.");
                         }
                     }
 
-                    Subject subject = this.subjects[index];
-                    String list = "수강자 목록\n";
-                    int sNum = 0;
+                    this.profs[index].addSubject(this.subjects[i]);
+                   
+                    break;
+                }
+                catch (Exception e)
+                {
+                    System.out.println("강좌 정보가 잘못되었습니다.");
+                    continue;
+                }
+            }
+        }
+    }
 
-                    System.out.println("담당 교수: " + subject.getProfessor());
+    private void modeRun(int mode)
+    {
+        switch(mode)
+        {
+            // if used student
+            case STUDENT: studentRun(mode);
+            break;
 
-                    for (int i = 0; i < this.students.length; i++)
+            // if used professor
+            case PROFESSOR: professorRun(mode);
+            break;
+        }
+    }
+
+    private void studentRun(int mode)
+    {
+        while (mode == STUDENT)
+        {
+            try
+            {
+                System.out.println("할 일을 선택하세요.\n1. 수강 신청\n2. 수강 확인");
+                switch(this.scanner.nextInt())
+                {
+                    case 1: mode = APPLY_CLASS; break;
+                    case 2: mode = CHECK_CLASS; break;
+                    default: mode = STUDENT; break;
+                }
+            }
+            catch (Exception e)
+            {
+                mode = STUDENT;
+            }
+            if (mode == STUDENT)
+            {
+                System.out.println("숫자가 잘못되었습니다.");
+            }
+        } 
+
+        if (mode == APPLY_CLASS)
+        {
+            int index = -1;
+            while (index == -1)
+            {
+                try
+                {
+                    System.out.println("학생의 학번을 입력하세요.");
+                    index = findStudentIndex(this.scanner.nextInt());
+                }
+                catch (Exception e)
+                {
+                    index = -1;
+                }
+                if (index == -1)
+                {
+                    System.out.println("학생 정보가 잘못되었습니다.");
+                }
+            }
+
+            Student student = this.students[index];
+            
+            for (int i = 0 ; i < 3; i++)
+            {
+                index = -1;
+                while (index == -1)
+                {
+                    try
                     {
-                        if (this.students[i].findSubject(subject))
-                        {
-                            list += this.students[i].toString(++sNum) + "\n";
-                        }
+                        System.out.println("강좌 번호를 입력하세요.");
+                        index = findSubjectIndex(this.scanner.nextInt());
                     }
-                    System.out.println("수강 인원: " + sNum + "\n" + list);
+                    catch (Exception e)
+                    {
+                        index = -1;
+                    }
+                    if (index == -1)
+                    {
+                        System.out.println("강좌 정보가 잘못되었습니다.");
+                    }
+                }
 
-                    mode = RETRY;
-                } 
-                break;
+                student.addSubject(this.subjects[index]);
+            }
+
+        }
+        else if (mode == CHECK_CLASS)
+        {
+            int index = -1;
+            while (index == -1)
+            {
+                try
+                {
+                    System.out.println("학생의 학번을 입력하세요.");
+                    index = findStudentIndex(this.scanner.nextInt());
+                }
+                catch (Exception e)
+                {
+                    index = -1;
+                }
+                if (index == -1)
+                {
+                    System.out.println("학생 정보가 잘못되었습니다.");
+                }
+            }
+
+            Student student = this.students[index];
+
+            System.out.println("학생 정보\n" + student.toString() + "\n수강 과목 목록");
+            for (int i = 0; i < this.subjects.length; i++)
+            {
+                if (this.subjects[i].findStudent(student))
+                {
+                    System.out.println(this.subjects[i].toString() + ", 담당 교수: " 
+                        + this.subjects[i].getProfessor().getName()); 
+                }
+            }
+            System.out.println("총 신청 학점: " + student.getGradeSum());
+        }
+    } 
+
+    private void professorRun(int mode)
+    {
+        int index = -1;
+        while (index == -1)
+        {
+            System.out.println("해당 강좌의 강좌 번호를 입력하세요.");
+            index = findSubjectIndex(this.scanner.nextInt());
+            
+            if (index == -1)
+            {
+                System.out.println("강좌 정보가 잘못되었습니다.");
             }
         }
 
-        scanner.close();
+        Subject subject = this.subjects[index];
+        String list = "수강자 목록\n";
+        int sNum = 0;
+
+        System.out.println("담당 교수: " + subject.getProfessor());
+
+        for (int i = 0; i < this.students.length; i++)
+        {
+            if (this.students[i].findSubject(subject))
+            {
+                list += this.students[i].toString(++sNum) + "\n";
+            }
+        }
+        System.out.println("수강 인원: " + sNum + "\n" + list);
     }
 
-    public int findProfessorIndex(int schoolNum)
+    private int findProfessorIndex(int schoolNum)
     {
         for (int i = 0; i < this.profs.length; i++)
         {
@@ -212,7 +307,7 @@ public class Process
         return -1;
     }
 
-    public int findStudentIndex(int schoolNum)
+    private int findStudentIndex(int schoolNum)
     {
         for (int i = 0; i < this.students.length; i++)
         {
@@ -225,7 +320,7 @@ public class Process
         return -1;
     }
 
-    public int findSubjectIndex(int subjectNum)
+    private int findSubjectIndex(int subjectNum)
     {
         for (int i = 0; i < this.subjects.length; i++)
         {
