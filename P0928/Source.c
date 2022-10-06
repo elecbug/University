@@ -85,17 +85,7 @@ TreeNode* find_postorder_successor(TreeNode* p)
 
 void thread_postorder(TreeNode* root)
 {
-	TreeNode* temp = root;
-
-	while (temp->left != NULL) temp = temp->left;
-
-	do
-	{
-		printf("%d - ", temp->data);
-
-		temp = find_postorder_successor(temp);
-
-	} while (temp != NULL);
+	/* ? */
 }
 
 int main()
