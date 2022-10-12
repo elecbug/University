@@ -9,6 +9,16 @@ public class Chair
         this.name = name;
     }
 
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
     public String toString()
     {
         if (this.name.equals("") || this.name == null)
