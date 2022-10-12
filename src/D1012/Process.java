@@ -1,5 +1,7 @@
 package D1012;
 
+import java.util.Scanner;
+
 public class Process 
 {
     private Chair[] sChairs;
@@ -22,9 +24,33 @@ public class Process
 
     public void run()
     {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("예약 시스템입니다.");
         while (true)
         {
-            
+            int select = -1;
+
+            while(select == -1)
+            {
+                System.out.println("예약: 1, 조회: 2, 취소: 3, 끝내기: 4");
+                try
+                {
+                    select = scanner.nextInt();
+
+                    switch(select)
+                    {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        default : throw new Exception();
+                    }
+                }
+                catch(Exception e)
+                {
+                    
+                }
+            }
         }
     }
 }
