@@ -30,14 +30,18 @@ public class Process {
     
             a = Integer.parseInt(splits[0]);
             b = Integer.parseInt(splits[2]);
-    
+            
+            Calculate cal = null;
+
             switch(splits[1])
             {
-                case "+": Add add = new Add(a, b); System.out.println("연산 결과: " + add.calculate()); break;
-                case "-": Sub sub = new Sub(a, b); System.out.println("연산 결과: " + sub.calculate()); break;
-                case "*": Mul mul = new Mul(a, b); System.out.println("연산 결과: " + mul.calculate()); break;
-                case "/": Div div = new Div(a, b); System.out.println("연산 결과: " + div.calculate()); break;
+                case "+": cal = new Add(a, b); break;
+                case "-": cal = new Sub(a, b); break;
+                case "*": cal = new Mul(a, b); break;
+                case "/": cal = new Div(a, b); break;
             }
+
+            System.out.println("연산 결과: " + cal.calculate());
         }
 
         scanner.close();
