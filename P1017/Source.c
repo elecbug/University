@@ -7,13 +7,13 @@ typedef struct tree_node
 	struct tree_node* left, * right;
 } TreeNode;
 
-void recursive_inorder(TreeNode* head)
+void recursive_preorder(TreeNode* head)
 {
 	if (head != NULL)
 	{
-		recursive_inorder(head->left);
+		recursive_preorder(head->left);
 		printf("%d - ", head->data);
-		recursive_inorder(head->right);
+		recursive_preorder(head->right);
 	}
 }
 

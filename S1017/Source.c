@@ -8,14 +8,18 @@ typedef struct tree_node
 	int height;
 } TreeNode;
 
-int recursive_inorder(TreeNode* head)
+int recursive_preorder(TreeNode* head)
 {
 	int height;
 	if (head != NULL)
 	{
-		int i1 = recursive_inorder(head->left);
-		printf("%d - ", head->data);
-		int i2 = recursive_inorder(head->right);
+		for (int i = 0; i < head->height; i++)
+		{
+			printf(" ");
+		}
+		printf("%d\n", head->data);
+		int i1 = recursive_preorder(head->left);
+		int i2 = recursive_preorder(head->right);
 		height = i1 > i2 ? i1 : i2;
 	}
 	if (head == NULL) return -1;
@@ -103,7 +107,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 			}
 		}
 	}
-	printf("{%d}\n", recursive_inorder(result));
+	printf("{%d}\n", recursive_preorder(result));
 
 	return result;
 }
@@ -113,9 +117,11 @@ int main()
 	TreeNode* root = NULL;
 	root = insert_BST(root, 5);
 	root = insert_BST(root, 6);
-	root = insert_BST(root, 7);
+	root = insert_BST(root, 8);
+	root = insert_BST(root, 7); 
+	root = insert_BST(root, 9);
 	root = insert_BST(root, 4);
-	root = insert_BST(root, 3);
 	root = insert_BST(root, 2);
+	root = insert_BST(root, 3);
 	root = insert_BST(root, 1);
 }
