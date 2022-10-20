@@ -7,11 +7,11 @@ typedef struct tree_node
 	int left_thread;
 	int data;
 	struct tree_node* left, * right;
-} AVLN;
+} TreeNode;
 
-AVLN* create_node(int data)
+TreeNode* create_node(int data)
 {
-	AVLN* new_node = malloc(sizeof(AVLN));
+	TreeNode* new_node = malloc(sizeof(TreeNode));
 	new_node->left = NULL;
 	new_node->right = NULL;
 	new_node->data = data;
@@ -20,7 +20,7 @@ AVLN* create_node(int data)
 	return new_node;
 }
 
-void make_complete_binary_tree(AVLN* parent, AVLN* son)
+void make_complete_binary_tree(TreeNode* parent, TreeNode* son)
 {
 	if (parent->left == NULL)
 	{
@@ -32,9 +32,9 @@ void make_complete_binary_tree(AVLN* parent, AVLN* son)
 	}
 }
 
-AVLN* find_inorder_successor(AVLN* p)
+TreeNode* find_inorder_successor(TreeNode* p)
 {
-	AVLN* q = p->right;
+	TreeNode* q = p->right;
 	if (q == NULL)
 	{
 		return q;
@@ -50,9 +50,9 @@ AVLN* find_inorder_successor(AVLN* p)
 	return q;
 }
 
-void thread_inorder(AVLN* root)
+void thread_inorder(TreeNode* root)
 {
-	AVLN* temp = root;
+	TreeNode* temp = root;
 
 	while (temp->left != NULL) temp = temp->left;
 
@@ -65,9 +65,9 @@ void thread_inorder(AVLN* root)
 	} while (temp != NULL);
 }
 
-AVLN* find_postorder_successor(AVLN* p) 
+TreeNode* find_postorder_successor(TreeNode* p) 
 {
-	AVLN* q = p->right;
+	TreeNode* q = p->right;
 	if (q == NULL)
 	{
 		return q;
@@ -83,20 +83,20 @@ AVLN* find_postorder_successor(AVLN* p)
 	return q;
 }
 
-void thread_postorder(AVLN* root)
+void thread_postorder(TreeNode* root)
 {
 	/* ? */
 }
 
 int main()
 {
-	AVLN* node1 = create_node(1);
-	AVLN* node2 = create_node(2);
-	AVLN* node3 = create_node(3);
-	AVLN* node4 = create_node(4);
-	AVLN* node5 = create_node(5);
-	AVLN* node6 = create_node(6);
-	AVLN* node7 = create_node(7);
+	TreeNode* node1 = create_node(1);
+	TreeNode* node2 = create_node(2);
+	TreeNode* node3 = create_node(3);
+	TreeNode* node4 = create_node(4);
+	TreeNode* node5 = create_node(5);
+	TreeNode* node6 = create_node(6);
+	TreeNode* node7 = create_node(7);
 
 	make_complete_binary_tree(node1, node2);
 	make_complete_binary_tree(node1, node3);

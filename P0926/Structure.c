@@ -5,10 +5,10 @@ typedef struct tree_node
 {
 	int data;
 	struct tree_node* left, * right;
-} AVLN;
+} TreeNode;
 
 typedef struct stack_node
 {
-	AVLN* data;
+	TreeNode* data;
 	struct stack_node* next;
 } StackNode;

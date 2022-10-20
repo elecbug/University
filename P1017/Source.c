@@ -6,17 +6,17 @@ typedef struct AVLTreeNode {
 	struct AVLTreeNode* left;
 	struct AVLTreeNode* right;
 	int height;
-} AVLN;
+} TreeNode;
 
-int Height(AVLN* root)
+int Height(TreeNode* root)
 {
 	if (!root) return -1;
 	else return root->height;
 }
 
-AVLN* SingleRotateLeft(AVLN* X)
+TreeNode* SingleRotateLeft(TreeNode* X)
 {
-	AVLN* W = X->left;
+	TreeNode* W = X->left;
 	X->left = W->right;
 	W->right = X;
 	X->height = max(Height(X->left), Height(X->right)) + 1;
@@ -24,9 +24,9 @@ AVLN* SingleRotateLeft(AVLN* X)
 	return W;
 }
 
-AVLN* SingleRotateRight(AVLN* W)
+TreeNode* SingleRotateRight(TreeNode* W)
 {
-	AVLN* X = W->right;
+	TreeNode* X = W->right;
 	W->right = X->left;
 	X->left = W;
 	W->height = max(Height(W->left), Height(W->right)) + 1;
@@ -34,9 +34,9 @@ AVLN* SingleRotateRight(AVLN* W)
 	return X;
 }
 
-AVLN* create(AVLN* parent)
+TreeNode* create(TreeNode* parent)
 {
-	AVLN* result = (AVLN*)malloc(sizeof(AVLN));
+	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
 	result->left = NULL;
 	result->right = NULL;
 	if (parent == NULL) result->height = 0;
@@ -45,7 +45,7 @@ AVLN* create(AVLN* parent)
 	return result;
 }
 
-void inorder(AVLN* root)
+void inorder(TreeNode* root)
 {
 	if (root != NULL)
 	{
@@ -59,9 +59,9 @@ void inorder(AVLN* root)
 	}
 }
 
-int test_violation(AVLN** pnode)
+int test_violation(TreeNode** pnode)
 {
-	AVLN* node = *pnode;
+	TreeNode* node = *pnode;
 	if (node->left != NULL && node->right == NULL && node->left->left != NULL && node->left->right == NULL)
 	{
 		printf("LL 위반 발생\n");
@@ -77,7 +77,7 @@ int test_violation(AVLN** pnode)
 	else return 0;
 }
 
-int recursive(AVLN** pnode, int height)
+int recursive(TreeNode** pnode, int height)
 {
 	int i1 = 0, i2 = 0, i3 = 0;
 	if (pnode != NULL && *pnode != NULL)
@@ -91,11 +91,11 @@ int recursive(AVLN** pnode, int height)
 	return i1 | i2 | i3;
 }
 
-AVLN* insert(AVLN* node, int data)
+TreeNode* insert(TreeNode* node, int data)
 {
 	printf("insert %d\n", data);
 
-	AVLN* root = node;
+	TreeNode* root = node;
 
 	if (root == NULL)
 	{
@@ -155,7 +155,7 @@ AVLN* insert(AVLN* node, int data)
 
 int main()
 {
-	AVLN* root = NULL;
+	TreeNode* root = NULL;
 	root = insert(root, 5);
 	root = insert(root, 4);
 	root = insert(root, 3);

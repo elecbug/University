@@ -6,9 +6,9 @@ typedef struct tree_node
 	int data;
 	struct tree_node* left, * right;
 	int height;
-} AVLN;
+} TreeNode;
 
-int recursive_preorder(AVLN* head)
+int recursive_preorder(TreeNode* head)
 {
 	int height;
 	if (head != NULL)
@@ -26,7 +26,7 @@ int recursive_preorder(AVLN* head)
 	else return height + 1;
 }
 
-AVLN* search_BST(AVLN* root, int target)
+TreeNode* search_BST(TreeNode* root, int target)
 {
 	while (1)
 	{
@@ -49,18 +49,18 @@ AVLN* search_BST(AVLN* root, int target)
 	}
 }
 
-AVLN* create()
+TreeNode* create()
 {
-	AVLN* result = (AVLN*)malloc(sizeof(AVLN));
+	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
 	result->left = NULL;
 	result->right = NULL;
 
 	return result;
 }
 
-AVLN* insert(AVLN* root, int data)
+TreeNode* insert(TreeNode* root, int data)
 {
-	AVLN* result = root;
+	TreeNode* result = root;
 
 	if (root == NULL)
 	{
@@ -114,7 +114,7 @@ AVLN* insert(AVLN* root, int data)
 
 int main()
 {
-	AVLN* root = NULL;
+	TreeNode* root = NULL;
 	root = insert(root, 5);
 	root = insert(root, 6);
 	root = insert(root, 8);

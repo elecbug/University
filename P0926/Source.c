@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Structure.c"
 
-void make_complete_binary_tree(AVLN* parent, AVLN* son)
+void make_complete_binary_tree(TreeNode* parent, TreeNode* son)
 {
 	if (parent->left == NULL)
 	{
@@ -14,16 +14,16 @@ void make_complete_binary_tree(AVLN* parent, AVLN* son)
 	}
 }
 
-AVLN* create_node(int data)
+TreeNode* create_node(int data)
 {
-	AVLN* new_node = malloc(sizeof(AVLN));
+	TreeNode* new_node = malloc(sizeof(TreeNode));
 	new_node->left = NULL;
 	new_node->right = NULL;
 	new_node->data = data;
 	return new_node;
 }
 
-void recursive_preorder(AVLN* head)
+void recursive_preorder(TreeNode* head)
 {
 	if (head != NULL)
 	{
@@ -33,7 +33,7 @@ void recursive_preorder(AVLN* head)
 	}
 }
 
-void recursive_preorder(AVLN* head)
+void recursive_preorder(TreeNode* head)
 {
 	if (head != NULL)
 	{
@@ -43,7 +43,7 @@ void recursive_preorder(AVLN* head)
 	}
 }
 
-void recursive_postorder(AVLN* head)
+void recursive_postorder(TreeNode* head)
 {
 	if (head != NULL)
 	{
@@ -60,7 +60,7 @@ StackNode* create_stack()
 	return top;
 }
 
-void push(StackNode* top, AVLN* data)
+void push(StackNode* top, TreeNode* data)
 {
 	StackNode* new_node = (StackNode*)malloc(sizeof(StackNode));
 	new_node->next = top->next;
@@ -68,7 +68,7 @@ void push(StackNode* top, AVLN* data)
 	top->next = new_node;
 }
 
-AVLN* pop(StackNode* top)
+TreeNode* pop(StackNode* top)
 {
 	StackNode* result = top->next->data;
 	StackNode* del = top->next;
@@ -77,7 +77,7 @@ AVLN* pop(StackNode* top)
 	return result;
 }
 
-void iterative_preorder(AVLN* head)
+void iterative_preorder(TreeNode* head)
 {
 	StackNode* top = create_stack();
 
@@ -105,7 +105,7 @@ void iterative_preorder(AVLN* head)
 	free(top);
 }
 
-void iterative_inorder(AVLN* head)
+void iterative_inorder(TreeNode* head)
 {
 	StackNode* top = create_stack();
 
@@ -133,7 +133,7 @@ void iterative_inorder(AVLN* head)
 	free(top);
 }
 
-void iterative_postorder(AVLN* head)
+void iterative_postorder(TreeNode* head)
 {
 	StackNode* top = create_stack();
 
@@ -177,7 +177,7 @@ void iterative_postorder(AVLN* head)
 
 int main()
 {
-	AVLN* head = create_node(1);
+	TreeNode* head = create_node(1);
 
 	make_complete_binary_tree(head, create_node(2));
 	make_complete_binary_tree(head, create_node(3));
