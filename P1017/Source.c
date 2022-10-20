@@ -1,107 +1,170 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct tree_node
-{
+typedef struct AVLTreeNode {
 	int data;
-	struct tree_node* left, * right;
-} TreeNode;
+	struct AVLTreeNode* left;
+	struct AVLTreeNode* right;
+	int height;
+} AVLN;
 
-void recursive_preorder(TreeNode* head)
+int Height(AVLN* root)
 {
-	if (head != NULL)
-	{
-		recursive_preorder(head->left);
-		printf("%d - ", head->data);
-		recursive_preorder(head->right);
-	}
+	if (!root) return -1;
+	else return root->height;
 }
 
-TreeNode* create_BST()
+AVLN* SingleRotateLeft(AVLN* X)
 {
-	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
+	AVLN* W = X->left;
+	X->left = W->right;
+	W->right = X;
+	X->height = max(Height(X->left), Height(X->right)) + 1;
+	W->height = max(Height(W->left), Height(W->right)) + 1;
+	return W;
+}
+
+AVLN* SingleRotateRight(AVLN* W)
+{
+	AVLN* X = W->right;
+	W->right = X->left;
+	X->left = W;
+	W->height = max(Height(W->left), Height(W->right)) + 1;
+	X->height = max(Height(X->left), Height(X->right)) + 1;
+	return X;
+}
+
+AVLN* create(AVLN* parent)
+{
+	AVLN* result = (AVLN*)malloc(sizeof(AVLN));
 	result->left = NULL;
 	result->right = NULL;
+	if (parent == NULL) result->height = 0;
+	else result->height = parent->height + 1;
 
 	return result;
 }
 
-TreeNode* search_BST(TreeNode* root, int target)
+void inorder(AVLN* root)
 {
-	while (1)
+	if (root != NULL)
 	{
-		if (root == NULL)
+		for (int i = 0; i < root->height; i++)
 		{
-			return NULL;
+			printf("-");
 		}
-		else if (target == root->data)
-		{
-			return root;
-		}
-		else if (target > root->data)
-		{
-			root = root->right;
-		}
-		else if (target < root->data)
-		{
-			root = root->left;
-		}
+		printf("%d\n", root->data);
+		inorder(root->left);
+		inorder(root->right);
 	}
 }
 
-TreeNode* insert_BST(TreeNode* root, int data)
+int test_violation(AVLN** pnode)
 {
-	TreeNode* result = root;
+	AVLN* node = *pnode;
+	if (node->left != NULL && node->right == NULL && node->left->left != NULL && node->left->right == NULL)
+	{
+		printf("LL 위반 발생\n");
+		*pnode = SingleRotateLeft(node);
+		return 1;
+	}
+	else if (node->right != NULL && node->left == NULL && node->right->right != NULL && node->right->left == NULL)
+	{
+		printf("RR 위반 발생\n");
+		*pnode = SingleRotateRight(node);
+		return 1;
+	}
+	else return 0;
+}
+
+int recursive(AVLN** pnode, int height)
+{
+	int i1 = 0, i2 = 0, i3 = 0;
+	if (pnode != NULL && *pnode != NULL)
+	{
+		(*pnode)->height = height;
+		i1 = test_violation(pnode);
+		i2 = recursive(&((*pnode)->left), height + 1);
+		i3 = recursive(&((*pnode)->right), height + 1);
+	}
+
+	return i1 | i2 | i3;
+}
+
+AVLN* insert(AVLN* node, int data)
+{
+	printf("insert %d\n", data);
+
+	AVLN* root = node;
 
 	if (root == NULL)
 	{
-		root = create_BST();
+		root = create(NULL);
 		root->data = data;
-
-		return root;
 	}
-	while (1)
+	else {
+		while (1)
+		{
+			if (node->data == data)
+			{
+				break;
+			}
+			else if (node->data < data)
+			{
+				if (node->right == NULL)
+				{
+					node->right = create(node);
+					node->right->data = data;
+
+					break;
+				}
+				else
+				{
+					node = node->right;
+				}
+			}
+			else if (node->data > data)
+			{
+				if (node->left == NULL)
+				{
+					node->left = create(node);
+					node->left->data = data;
+
+					break;
+				}
+				else
+				{
+					node = node->left;
+				}
+			}
+		}
+	}
+
+	inorder(root);
+	printf("test violation %d\n", data);
+	for (int roof = 1; roof == 1; )
 	{
-		if (root->data == data)
-		{
-			return result;
-		}
-		else if (root->data < data)
-		{
-			if (root->right == NULL)
-			{
-				root->right = create_BST();
-				root->right->data = data;
-
-				return result;
-			}
-			else
-			{
-				root = root->right;
-			}
-		}
-		else if (root->data > data)
-		{
-			if (root->left == NULL)
-			{
-				root->left = create_BST();
-				root->left->data = data;
-
-				return result;
-			}
-			else
-			{
-				root = root->left;
-			}
-		}
+		roof = recursive(&root, 0);
 	}
+
+	inorder(root);
+	printf("\n");
+
+	return root;
 }
 
 int main()
 {
-	TreeNode* root = insert_BST(root, 1);
-	TreeNode* root = insert_BST(root, 2);
-	TreeNode* root = insert_BST(root, 3);
-	TreeNode* root = insert_BST(root, 4);
+	AVLN* root = NULL;
+	root = insert(root, 5);
+	root = insert(root, 4);
+	root = insert(root, 3);
+	root = insert(root, 2);
+	root = insert(root, 1);
+	root = insert(root, 6);
+	root = insert(root, 7);
+	root = insert(root, 8);
+	root = insert(root, 9);
+	root = insert(root, 10);
 
 }

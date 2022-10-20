@@ -5,15 +5,15 @@ typedef struct tree_node
 {
 	int data;
 	struct tree_node* left, * right;
-} TreeNode;
+} AVLN;
 
-void make_binary_tree(TreeNode* parent, TreeNode* lson, TreeNode* rson)
+void make_binary_tree(AVLN* parent, AVLN* lson, AVLN* rson)
 {
 	parent->left = lson;
 	parent->right = rson;
 }
 
-void make_complete_binary_tree(TreeNode* parent, TreeNode* son) 
+void make_complete_binary_tree(AVLN* parent, AVLN* son) 
 {
 	if (parent->left == NULL) 
 	{
@@ -25,16 +25,16 @@ void make_complete_binary_tree(TreeNode* parent, TreeNode* son)
 	}
 }
 
-TreeNode* create_node(int data)
+AVLN* create_node(int data)
 {
-	TreeNode* new_node = malloc(sizeof(TreeNode));
+	AVLN* new_node = malloc(sizeof(AVLN));
 	new_node->left = NULL;
 	new_node->right = NULL;
 	new_node->data = data;
 	return new_node;
 }
 
-void recursive_preorder(TreeNode* head)
+void recursive_preorder(AVLN* head)
 {
 	printf("%d - ", head->data);
 	if (head->left != NULL) 
@@ -47,14 +47,14 @@ void recursive_preorder(TreeNode* head)
 	}
 }
 
-void iterative_preorder(TreeNode* head)
+void iterative_preorder(AVLN* head)
 {
 
 }
 
 int main()
 {
-	TreeNode* head = create_node(0);
+	AVLN* head = create_node(0);
 
 	make_complete_binary_tree(head, create_node(1));
 	make_complete_binary_tree(head, create_node(2));

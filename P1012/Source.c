@@ -5,9 +5,9 @@ typedef struct tree_node
 {
 	int data;
 	struct tree_node* left, * right;
-} TreeNode;
+} AVLN;
 
-void recursive_preorder(TreeNode* head)
+void recursive_preorder(AVLN* head)
 {
 	if (head != NULL)
 	{
@@ -17,16 +17,16 @@ void recursive_preorder(TreeNode* head)
 	}
 }
 
-TreeNode* create_BST()
+AVLN* create()
 {
-	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
+	AVLN* result = (AVLN*)malloc(sizeof(AVLN));
 	result->left = NULL;
 	result->right = NULL;
 
 	return result;
 }
 
-TreeNode* search_BST(TreeNode* root, int target)
+AVLN* search_BST(AVLN* root, int target)
 {
 	while (1)
 	{
@@ -49,13 +49,13 @@ TreeNode* search_BST(TreeNode* root, int target)
 	}
 }
 
-TreeNode* insert_BST(TreeNode* root, int data)
+AVLN* insert(AVLN* root, int data)
 {
-	TreeNode* result = root;
+	AVLN* result = root;
 
 	if (root == NULL)
 	{
-		root = create_BST();
+		root = create();
 		root->data = data;
 
 		return root;
@@ -70,7 +70,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 		{
 			if (root->right == NULL)
 			{
-				root->right = create_BST();
+				root->right = create();
 				root->right->data = data;
 
 				return result;
@@ -84,7 +84,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 		{
 			if (root->left == NULL)
 			{
-				root->left = create_BST();
+				root->left = create();
 				root->left->data = data;
 
 				return result;
@@ -97,7 +97,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 	}
 }
 
-TreeNode* find_max(TreeNode* root)
+AVLN* find_max(AVLN* root)
 {
 	while (root->right != NULL)
 	{
@@ -107,7 +107,7 @@ TreeNode* find_max(TreeNode* root)
 	return root;
 }
 
-TreeNode* find_min(TreeNode* root)
+AVLN* find_min(AVLN* root)
 {
 	while (root->left != NULL)
 	{
@@ -117,9 +117,9 @@ TreeNode* find_min(TreeNode* root)
 	return root;
 }
 
-TreeNode* pre_delete_BST(TreeNode* root, int data)
+AVLN* pre_delete_BST(AVLN* root, int data)
 {
-	TreeNode* temp;
+	AVLN* temp;
 	if (root == NULL)
 		printf("Element not there in tree\n");
 	else if (data < root->data)
@@ -147,9 +147,9 @@ TreeNode* pre_delete_BST(TreeNode* root, int data)
 	return root;
 }
 
-TreeNode* post_delete_BST(TreeNode* root, int data)
+AVLN* post_delete_BST(AVLN* root, int data)
 {
-	TreeNode* temp;
+	AVLN* temp;
 	if (root == NULL)
 		printf("Element not there in tree\n");
 	else if (data < root->data)
@@ -181,10 +181,10 @@ TreeNode* post_delete_BST(TreeNode* root, int data)
 int main()
 {
 	int data[] = { 40,20,80,50,100,70,60 };
-	TreeNode* root = NULL;
+	AVLN* root = NULL;
 	for (int i = 0; i < 7; i++)
 	{
-		root = insert_BST(root, data[i]);
+		root = insert(root, data[i]);
 	}
 
 	root = post_delete_BST(root, 80);

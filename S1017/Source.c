@@ -6,9 +6,9 @@ typedef struct tree_node
 	int data;
 	struct tree_node* left, * right;
 	int height;
-} TreeNode;
+} AVLN;
 
-int recursive_preorder(TreeNode* head)
+int recursive_preorder(AVLN* head)
 {
 	int height;
 	if (head != NULL)
@@ -26,7 +26,7 @@ int recursive_preorder(TreeNode* head)
 	else return height + 1;
 }
 
-TreeNode* search_BST(TreeNode* root, int target)
+AVLN* search_BST(AVLN* root, int target)
 {
 	while (1)
 	{
@@ -49,22 +49,22 @@ TreeNode* search_BST(TreeNode* root, int target)
 	}
 }
 
-TreeNode* create_BST()
+AVLN* create()
 {
-	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
+	AVLN* result = (AVLN*)malloc(sizeof(AVLN));
 	result->left = NULL;
 	result->right = NULL;
 
 	return result;
 }
 
-TreeNode* insert_BST(TreeNode* root, int data)
+AVLN* insert(AVLN* root, int data)
 {
-	TreeNode* result = root;
+	AVLN* result = root;
 
 	if (root == NULL)
 	{
-		root = create_BST();
+		root = create();
 		root->data = data;
 		root->height = 0;
 
@@ -80,7 +80,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 		{
 			if (root->right == NULL)
 			{
-				root->right = create_BST();
+				root->right = create();
 				root->right->data = data;
 				root->right->height = root->height + 1;
 
@@ -95,7 +95,7 @@ TreeNode* insert_BST(TreeNode* root, int data)
 		{
 			if (root->left == NULL)
 			{
-				root->left = create_BST();
+				root->left = create();
 				root->left->data = data;
 				root->left->height = root->height + 1;
 
@@ -114,14 +114,14 @@ TreeNode* insert_BST(TreeNode* root, int data)
 
 int main()
 {
-	TreeNode* root = NULL;
-	root = insert_BST(root, 5);
-	root = insert_BST(root, 6);
-	root = insert_BST(root, 8);
-	root = insert_BST(root, 7); 
-	root = insert_BST(root, 9);
-	root = insert_BST(root, 4);
-	root = insert_BST(root, 2);
-	root = insert_BST(root, 3);
-	root = insert_BST(root, 1);
+	AVLN* root = NULL;
+	root = insert(root, 5);
+	root = insert(root, 6);
+	root = insert(root, 8);
+	root = insert(root, 7); 
+	root = insert(root, 9);
+	root = insert(root, 4);
+	root = insert(root, 2);
+	root = insert(root, 3);
+	root = insert(root, 1);
 }
