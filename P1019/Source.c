@@ -53,37 +53,38 @@ void inorder(TreeNode* root, int height)
 	}
 }
 
-void check_violation(TreeNode** pnode, int data)
+TreeNode* check_violation(TreeNode* node, int data)
 {
-	TreeNode* node = *pnode;
 	int balance = height(node->left) - height(node->right);
 
 	if (balance > 1 && node->left->data > data)
 	{
 		// LL
 		printf("LL violation\n");
-		*pnode = srRight(node);
+		node = srRight(node);
 	}
 	else if (balance < -1 && node->right->data < data)
 	{
 		// RR
 		printf("RR violation\n");
-		*pnode = srLeft(node);
+		node = srLeft(node);
 	}
 	else if (balance > 1 && node->left->data < data)
 	{
 		// LR
 		printf("LR violation\n");
 		node->left = srLeft(node->left);
-		*pnode = srRight(node);
+		node = srRight(node);
 	}
 	else if (balance < -1 && node->right->data > data)
 	{
 		// RL
 		printf("RL violation\n");
 		node->right = srRight(node->right);
-		*pnode = srLeft(node);
+		node = srLeft(node);
 	}
+
+	return node;
 }
 
 TreeNode* violation_reculsive(TreeNode* node, int data)
@@ -93,7 +94,7 @@ TreeNode* violation_reculsive(TreeNode* node, int data)
 		int b = height(node->left) - height(node->right);
 		if (b > 1 || b < -1)
 		{
-			check_violation(&node, data);
+			node = check_violation(node, data);
 		}
 		node->left = violation_reculsive(node->left, data);
 		node->right = violation_reculsive(node->right, data);
@@ -103,8 +104,6 @@ TreeNode* violation_reculsive(TreeNode* node, int data)
 
 TreeNode* insert(TreeNode* node, int data)
 {
-	printf("insert %d\n", data);
-
 	TreeNode* root = node;
 
 	if (root == NULL)
@@ -153,27 +152,79 @@ TreeNode* insert(TreeNode* node, int data)
 
 	root = violation_reculsive(root, data);
 
-	inorder(root, 0);
-	printf("\n");
+	return root;
+}
 
+TreeNode* find_max(TreeNode* root)
+{
+	while (root->right != NULL)
+	{
+		root = root->right;
+	}
+
+	return root;
+}
+
+TreeNode* erase(TreeNode* node, int data)
+{
+	TreeNode* temp;
+	if (node == NULL)
+		printf("Element not there in tree\n");
+	else if (data < node->data)
+		node->left = erase(node->left, data);
+	else if (data > node->data)
+		node->right = erase(node->right, data);
+	else
+	{
+		if (node->left && node->right)
+		{
+			temp = find_max(node->left);
+			node->data = temp->data;
+			node->left = erase(node->left, node->data);
+		}
+		else
+		{
+			temp = node;
+			if (node->left == NULL)
+				node = node->right;
+			else if (node->right == NULL)
+				node = node->left;
+			free(temp);
+		}
+	}
+
+	node = violation_reculsive(node, data);
+
+	return node;
+}
+
+TreeNode* avl_insert(TreeNode* root, int data)
+{
+	printf("insert %d\n", data);
+	root = insert(root, data);
+	inorder(root, 0);
+	return root;
+}
+
+TreeNode* avl_delete(TreeNode* root, int data)
+{
+	printf("delete %d\n", data);
+	root = erase(root, data);
+	inorder(root, 0);
 	return root;
 }
 
 int main()
 {
 	TreeNode* root = NULL;
-	/*root = insert(root, 17);
-	root = insert(root, 14);
-	root = insert(root, 2);
-	root = insert(root, 26);
-	root = insert(root, 20);
-	root = insert(root, 66);
-	root = insert(root, 28);*/
-	root = insert(root, 1);
-	root = insert(root, 2);
-	root = insert(root, 3);
-	root = insert(root, 4);
-	root = insert(root, 5);
-	root = insert(root, 6);
-	root = insert(root, 7);
+	root = avl_insert(root, 17);
+	root = avl_insert(root, 14);
+	root = avl_insert(root, 26);
+	root = avl_insert(root, 2);
+	root = avl_insert(root, 20);
+	root = avl_insert(root, 66);
+	root = avl_insert(root, 28);
+
+	root = avl_delete(root, 17);
+	root = avl_delete(root, 20);
 }
