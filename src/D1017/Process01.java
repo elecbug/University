@@ -2,7 +2,7 @@ package D1017;
 
 import java.util.Scanner;
 
-public class Process {
+public class Process01 {
     public void run()
     {
         Scanner scanner = new Scanner(System.in);
