@@ -1,23 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define max(x, y) x > y ? x : y
+#define max(x, y) (x > y ? x : y)
 
 typedef struct AVLTreeNode {
 	int data;
 	struct AVLTreeNode* left;
 	struct AVLTreeNode* right;
-	int height;
 } TreeNode;
 
-int height(TreeNode* root)
+int height(TreeNode* node)
 {
-	if (!root) return -1;
-	else return root->height;
-}
-
-int getBF(TreeNode* node)
-{
-	return height(node->left) - height(node->right);
+	if (node == NULL) return -1;
+	else return max(height(node->left), height(node->right)) + 1;
 }
 
 TreeNode* srLeft(TreeNode* X)
@@ -25,8 +19,6 @@ TreeNode* srLeft(TreeNode* X)
 	TreeNode* W = X->right;
 	X->right = W->left;
 	W->left = X;
-	X->height = max(height(X->left), height(X->right)) + 1;
-	W->height = max(height(W->left), height(W->right)) + 1;
 	return W;
 }
 
@@ -35,83 +27,78 @@ TreeNode* srRight(TreeNode* W)
 	TreeNode* X = W->left;
 	W->left = X->right;
 	X->right = W;
-	W->height = max(height(W->left), height(W->right)) + 1;
-	X->height = max(height(X->left), height(X->right)) + 1;
 	return X;
 }
 
-TreeNode* create(TreeNode* parent)
+TreeNode* create()
 {
 	TreeNode* result = (TreeNode*)malloc(sizeof(TreeNode));
 	result->left = NULL;
 	result->right = NULL;
-	if (parent == NULL) result->height = 0;
-	else result->height = parent->height + 1;
 
 	return result;
 }
 
-void inorder(TreeNode* root)
+void inorder(TreeNode* root, int height)
 {
 	if (root != NULL)
 	{
-		for (int i = 0; i < root->height; i++)
+		for (int i = 0; i < height; i++)
 		{
 			printf("-");
 		}
 		printf("%2d\n", root->data);
-		inorder(root->left);
-		inorder(root->right);
+		inorder(root->left, height + 1);
+		inorder(root->right, height + 1);
 	}
 }
 
-int test_violation(TreeNode** pnode)
+void check_violation(TreeNode** pnode, int data)
 {
 	TreeNode* node = *pnode;
-	if (getBF(node) == 2 && node->left != NULL && getBF(node->left) == 1)
+	int balance = height(node->left) - height(node->right);
+
+	if (balance > 1 && node->left->data > data)
 	{
 		// LL
 		printf("LL violation\n");
 		*pnode = srRight(node);
-		return 1;
 	}
-	else if (getBF(node) == -2 && node->right != NULL && getBF(node->right) == -1)
+	else if (balance < -1 && node->right->data < data)
 	{
 		// RR
 		printf("RR violation\n");
 		*pnode = srLeft(node);
-		return 1;
 	}
-	else if (getBF(node) == 0 && node->left != NULL && getBF(node->left) == -1)
+	else if (balance > 1 && node->left->data < data)
 	{
 		// LR
 		printf("LR violation\n");
 		node->left = srLeft(node->left);
 		*pnode = srRight(node);
-		return 1;
 	}
-	else if (getBF(node) == -2 && node->right != NULL && getBF(node->right) == 1)
+	else if (balance < -1 && node->right->data > data)
 	{
 		// RL
 		printf("RL violation\n");
 		node->right = srRight(node->right);
 		*pnode = srLeft(node);
-		return 1;
 	}
-	else return 0;
 }
 
-int violation(TreeNode** pnode)
+TreeNode* violation_reculsive(TreeNode* node, int data)
 {
-	int i1 = 0, i2 = 0, i3 = 0;
-	if (pnode != NULL && *pnode != NULL)
+	if (node != NULL)
 	{
-		i1 = test_violation(pnode);
-		i2 = violation(&((*pnode)->left));
-		i3 = violation(&((*pnode)->right));
+		int b = height(node->left) - height(node->right);
+		if (b > 1 || b < -1)
+		{
+			check_violation(&node, data);
+		}
+		node->left = violation_reculsive(node->left, data);
+		node->right = violation_reculsive(node->right, data);
 	}
-
-	return i1 | i2 | i3;
+	return node;
 }
 
 TreeNode* insert(TreeNode* node, int data)
@@ -122,10 +109,11 @@ TreeNode* insert(TreeNode* node, int data)
 
 	if (root == NULL)
 	{
-		root = create(NULL);
+		root = create();
 		root->data = data;
 	}
-	else {
+	else 
+	{
 		while (1)
 		{
 			if (node->data == data)
@@ -136,7 +124,7 @@ TreeNode* insert(TreeNode* node, int data)
 			{
 				if (node->right == NULL)
 				{
-					node->right = create(node);
+					node->right = create();
 					node->right->data = data;
 
 					break;
@@ -150,7 +138,7 @@ TreeNode* insert(TreeNode* node, int data)
 			{
 				if (node->left == NULL)
 				{
-					node->left = create(node);
+					node->left = create();
 					node->left->data = data;
 
 					break;
@@ -163,14 +151,9 @@ TreeNode* insert(TreeNode* node, int data)
 		}
 	}
 
-	inorder(root);
-	printf("test violation %d\n", data);
-	for (int roof = 1; roof == 1; )
-	{
-		roof = violation(&root);
-	}
+	root = violation_reculsive(root, data);
 
-	inorder(root);
+	inorder(root, 0);
 	printf("\n");
 
 	return root;
@@ -187,7 +170,10 @@ int main()
 	root = insert(root, 66);
 	root = insert(root, 28);*/
 	root = insert(root, 1);
-	root = insert(root, 2); 
+	root = insert(root, 2);
 	root = insert(root, 3);
-
+	root = insert(root, 4);
+	root = insert(root, 5);
+	root = insert(root, 6);
+	root = insert(root, 7);
 }
