@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #define max(x, y) (x > y ? x : y)
 
@@ -43,9 +43,10 @@ void inorder(TreeNode* root, int height)
 {
 	if (root != NULL)
 	{
+		char* str[] = { "  ", "→" };
 		for (int i = 0; i < height; i++)
 		{
-			printf("-");
+			printf("%s", str[i == height - 1]);
 		}
 		printf("%2d\n", root->data);
 		inorder(root->left, height + 1);
