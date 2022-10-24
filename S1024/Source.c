@@ -109,6 +109,6 @@ int main()
 
 	for (int i = 0; i < capacity + 1; i++)
 	{
-		printf("%d -> ", arr[i]);
+		printf("arr[%d]: %d\n", i, arr[i]);
 	}
 }
