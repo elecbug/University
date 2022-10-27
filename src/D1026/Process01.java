@@ -15,6 +15,7 @@ public class Process01
 
         Arrays.sort(splitter);
 
+        System.out.println("어절의 갯수입니다: " + splitter.length);
         System.out.println("사전 순서 정렬입니다.");
         for (String str : splitter)
         {
