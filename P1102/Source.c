@@ -17,6 +17,7 @@ B의 과정과 동일
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
+#include "Structure.h"
 #include "TickTime.h"
 #include "ArrayFunction.h"
 #include "BSTFunction.h"
@@ -29,7 +30,7 @@ element random()
 	return rand() * rand();
 }
 
-clock_t linear_mode(size_t count, int r)
+void linear_mode(size_t count, int r, long* find)
 {
 	// insert
 	Array* arr = create_array(count);
@@ -55,10 +56,10 @@ clock_t linear_mode(size_t count, int r)
 
 	printf("배열 %8d개의 데이터에서 %2d회 순차 탐색: %.6llf 초\n", count, r, get_term(&tick) / (double)1000);
 
-	return get_term(&tick);
+	*find = get_term(&tick) / r;
 }
 
-clock_t bst_mode(size_t count, int r)
+void bst_mode(size_t count, int r, long* create, long* find)
 {
 	Tick insert;
 	Tick tick;
@@ -89,13 +90,14 @@ clock_t bst_mode(size_t count, int r)
 	end(&tick);
 
 	printf("BST %8d개의 데이터 삽입: %.6llf 초, %6d회 순차 탐색: %.6llf 초, 총 %.6llf 초\n",
-		count, r, get_term(&insert) / (double)1000, get_term(&tick) / (double)1000,
+		count, get_term(&insert) / (double)1000, r, get_term(&tick) / (double)1000,
 		(get_term(&tick) + get_term(&insert)) / (double)1000);
 
-	return get_term(&insert) + get_term(&tick);
+	*create = get_term(&insert);
+	*find = get_term(&tick);
 }
 
-clock_t avl_mode(size_t count, int r)
+void avl_mode(size_t count, int r, long* create, long* find)
 {
 	Tick insert;
 	Tick tick;
@@ -126,10 +128,11 @@ clock_t avl_mode(size_t count, int r)
 	end(&tick);
 
 	printf("AVL %8d개의 데이터 삽입: %.6llf 초, %6d회 순차 탐색: %.6llf 초, 총 %.6llf 초\n",
-		count, r, get_term(&insert) / (double)1000, get_term(&tick) / (double)1000,
+		count, get_term(&insert) / (double)1000, r, get_term(&tick) / (double)1000,
 		(get_term(&tick) + get_term(&insert)) / (double)1000);
 
-	return get_term(&insert) + get_term(&tick);
+	*create = get_term(&insert);
+	*find = get_term(&tick);
 }
 
 int main()
@@ -141,33 +144,35 @@ int main()
 		{
 		case '1': 
 		{
-			long time[20] = {0};
+			long find[20] = {0};
 			
 			for (int i = 1; i <= 20; i++)
 			{
-				time[i - 1] = linear_mode(i * 500000, 50) / 50;
+				linear_mode(i * 500000, 50, find + i - 1);
 			}
 
 			break;
 		}
 		case '2':
 		{
-			long time[20] = { 0 };
+			long create[20] = { 0 };
+			long find[20] = { 0 };
 
 			for (int i = 1; i <= 20; i++)
 			{
-				time[i - 1] = bst_mode(i * 500000, 100000) / 50;
+				bst_mode(i * 500000, 100000, create + i - 1, find + i - 1);
 			}
 
 			break;
 		}
 		case '3':
 		{
-			long time[20] = { 0 };
+			long create[20] = { 0 };
+			long find[20] = { 0 };
 
 			for (int i = 1; i <= 20; i++)
 			{
-				time[i - 1] = avl_mode(i * 500000, 100000) / 50;
+				avl_mode(i * 500000, 100000, create + i - 1, find + i - 1);
 			}
 
 			break;
