@@ -25,3 +25,10 @@ typedef struct avl_node
 	struct avl_node* left;
 	struct avl_node* right;
 } AVLN;
+
+typedef struct time_saver
+{
+	long insert;
+	long find;
+
+} TSaver;
