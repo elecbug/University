@@ -13,9 +13,9 @@ namespace P1102_S
 {
     public partial class MainForm : Form
     {
-        private Panel panel;
-        private Label label;
         private string[] data;
+        private Panel panel;
+        private Graphics graphics;
 
         public MainForm()
         {
@@ -24,6 +24,9 @@ namespace P1102_S
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            this.Text = "View";
+            this.ClientSize = new Size(800, 950);
+
             this.panel = new Panel()
             {
                 Location = new Point(0, 0),
@@ -31,19 +34,13 @@ namespace P1102_S
                 Parent = this,
                 Visible = true,
                 Dock = DockStyle.Fill,
-                AllowDrop = true,
                 BackColor = Color.Black,
+                AllowDrop = true,
             };
             this.panel.DragEnter += PanelDragEnter;
             this.panel.DragDrop += PanelDragDrop;
 
-            this.label = new Label()
-            {
-                Location = new Point(5, 5),
-                Parent = this.panel,
-                Visible = true,
-                ForeColor = Color.White,
-            };
+            this.graphics = this.panel.CreateGraphics();
         }
 
         private void PanelDragEnter(object? sender, DragEventArgs e)
@@ -56,42 +53,51 @@ namespace P1102_S
 
         private void PanelDragDrop(object? sender, DragEventArgs e)
         {
-            this.panel.CreateGraphics().Clear(this.panel.BackColor);
-
             string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
-            StreamReader reader = new StreamReader(files[0]);
 
-            this.data = reader.ReadToEnd().Split('\n');
-            Debug.WriteLine(reader.ToString());
-            reader.Close();
-
-            this.label.Text = this.data[0];
-
-            for (int i = 1; i < this.data.Length - 1; i++)
+            for (int fs = 0; fs < files.Length; fs++)
             {
-                try
-                {
-                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[0]) / 10);
-                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[0]) / 10);
-                    Pen pen = new Pen(Color.Blue);
+                StreamReader reader = new StreamReader(files[fs]);
 
-                    this.panel.CreateGraphics().DrawLine(pen, p1, p2);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
-                try
-                {
-                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[1]) / 10);
-                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[1]) / 10);
-                    Pen pen = new Pen(Color.Red);
+                this.data = reader.ReadToEnd().Split('\n');
+                Debug.WriteLine(reader.ToString());
+                reader.Close();
 
-                    this.panel.CreateGraphics().DrawLine(pen, p1, p2);
-                }
-                catch (Exception ex)
+                new Label()
                 {
-                    Debug.WriteLine(ex);
+                    Location = new Point(5, 5),
+                    Parent = this.panel,
+                    Visible = true,
+                    ForeColor = Color.White,
+                    Text = this.data[0],
+                };
+
+                for (int i = 1; i < this.data.Length - 1; i++)
+                {
+                    try
+                    {
+                        Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[0]) / 5 - 30);
+                        Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[0]) / 5 - 30);
+                        Pen pen = new Pen(Color.Blue);
+
+                        this.graphics.DrawLine(pen, p1, p2);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                    }
+                    try
+                    {
+                        Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[1]) / 5 - 30);
+                        Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[1]) / 5 - 30);
+                        Pen pen = new Pen(Color.Red);
+
+                        this.graphics.DrawLine(pen, p1, p2);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                    }
                 }
             }
         }
