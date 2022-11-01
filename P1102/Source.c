@@ -32,6 +32,28 @@ element random()
 	return rand() * rand();
 }
 
+void write_only_mode(size_t count, TSaver* saver)
+{
+	element temp;
+
+	Tick insert;
+
+	start(&insert);
+
+	for (int i = 0; i < count; i++)
+	{
+		temp = random();
+	}
+
+	end(&insert);
+	
+	printf("random() 함수 %8d번 호출: %.3llf 초\n",
+		count, get_term(&insert) / (double)1000);
+
+	saver->insert = get_term(&insert);
+	saver->find = 0;
+}
+
 void linear_mode(size_t count, int r, TSaver* saver)
 {
 	Tick insert;
@@ -62,7 +84,7 @@ void linear_mode(size_t count, int r, TSaver* saver)
 	// end timer
 	end(&find);
 
-	printf("Array %8d개의 데이터 삽입: %.6llf 초, %2d회 순차 탐색: %.6llf 초, 총 %.6llf 초\n",
+	printf("Array %8d개의 데이터 삽입: %.3llf 초, %2d회 순차 탐색: %.3llf 초, 총 %.3llf 초\n",
 		count, get_term(&insert) / (double)1000, r, get_term(&find) / (double)1000,
 		(get_term(&find) + get_term(&insert)) / (double)1000);
 
@@ -100,7 +122,7 @@ void bst_mode(size_t count, int r, TSaver* saver)
 	// end timer
 	end(&search);
 
-	printf("BST %8d개의 데이터 삽입: %.6llf 초, %6d회 순차 탐색: %.6llf 초, 총 %.6llf 초\n",
+	printf("BST %8d개의 데이터 삽입: %.3llf 초, %6d회 순차 탐색: %.3llf 초, 총 %.3llf 초\n",
 		count, get_term(&insert) / (double)1000, r, get_term(&search) / (double)1000,
 		(get_term(&search) + get_term(&insert)) / (double)1000);
 
@@ -138,7 +160,7 @@ void avl_mode(size_t count, int r, TSaver* saver)
 	// end timer
 	end(&search);
 
-	printf("AVL %8d개의 데이터 삽입: %.6llf 초, %6d회 순차 탐색: %.6llf 초, 총 %.6llf 초\n",
+	printf("AVL %8d개의 데이터 삽입: %.3llf 초, %6d회 순차 탐색: %.3llf 초, 총 %.3llf 초\n",
 		count, get_term(&insert) / (double)1000, r, get_term(&search) / (double)1000,
 		(get_term(&search) + get_term(&insert)) / (double)1000);
 
@@ -160,6 +182,7 @@ void create_file(TSaver* data, size_t count,int mode)
 
 	switch (mode)
 	{
+	case 0: fputs("Check only random()\n", fp); break;
 	case 1: fputs("Linear(array) mode\n", fp); break;
 	case 2: fputs("BST mode\n", fp); break;
 	case 3: fputs("AVL mode\n", fp); break;
@@ -178,12 +201,27 @@ void create_file(TSaver* data, size_t count,int mode)
 
 int main()
 {
+	int input;
+
 	while (1)
 	{
-		printf("Select search mode\n 1) Linear(array)\n 2) BST\n 3) AVL\n 4) exit\n>> ");
-		switch (getchar())
+		printf("Select search mode\n 0) Check only random()\n 1) Linear(array)\n 2) BST\n 3) AVL\n 4) exit\n>> ");
+		scanf("%d", &input);
+		switch (input)
 		{
-		case '1': 
+		case 0:
+		{
+			TSaver s[COUNT] = { 0 };
+			
+			for (int i = 1; i <= COUNT; i++)
+			{
+				write_only_mode(i * 500000, s + i - 1);
+			}
+
+			create_file(s, COUNT, 0);
+			break;
+		}
+		case 1: 
 		{
 			TSaver s[COUNT] = { 0 };
 			
@@ -195,7 +233,7 @@ int main()
 			create_file(s, COUNT, 1);
 			break;
 		}
-		case '2':
+		case 2:
 		{
 			TSaver s[COUNT] = { 0 };
 
@@ -207,7 +245,7 @@ int main()
 			create_file(s, COUNT, 2);
 			break; 
 		}
-		case '3':
+		case 3:
 		{
 			TSaver s[COUNT] = { 0 };
 
@@ -219,7 +257,7 @@ int main()
 			create_file(s, COUNT, 3);
 			break; 
 		}
-		case '4': return;
+		case 4: return;
 		}
 	}
 }

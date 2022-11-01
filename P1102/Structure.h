@@ -30,5 +30,4 @@ typedef struct time_saver
 {
 	long insert;
 	long find;
-
 } TSaver;
