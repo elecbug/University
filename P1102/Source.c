@@ -32,29 +32,19 @@ element random()
 	return rand() * rand();
 }
 
-void write_only_mode(size_t count, TSaver* saver)
+element* create_random(size_t count)
 {
-	element temp;
-
-	Tick insert;
-
-	start(&insert);
+	element* result = (element*)malloc(count * sizeof(element));
 
 	for (int i = 0; i < count; i++)
 	{
-		temp = random();
+		result[i] = random();
 	}
 
-	end(&insert);
-	
-	printf("random() 함수 %8d번 호출: %.3llf 초\n",
-		count, get_term(&insert) / (double)1000);
-
-	saver->insert = get_term(&insert);
-	saver->find = 0;
+	return result;
 }
 
-void linear_mode(size_t count, int r, TSaver* saver)
+void linear_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
 	Tick find;
@@ -65,7 +55,7 @@ void linear_mode(size_t count, int r, TSaver* saver)
 	Array* arr = create_array(count);
 	for (int i = 0; i < count; i++)
 	{
-		write_array(arr, i, random());
+		write_array(arr, i, *(data + i));
 	}
 
 	// insert end
@@ -76,7 +66,7 @@ void linear_mode(size_t count, int r, TSaver* saver)
 
 	for (int i = 0; i < r; i++)
 	{
-		element num = random();
+		element num = *(r_data + i);
 
 		find_array(arr, num);
 	}
@@ -92,7 +82,7 @@ void linear_mode(size_t count, int r, TSaver* saver)
 	saver->find = get_term(&find);
 }
 
-void bst_mode(size_t count, int r, TSaver* saver)
+void bst_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
 	Tick search;
@@ -103,7 +93,7 @@ void bst_mode(size_t count, int r, TSaver* saver)
 	BSTN* bst = create_BST();
 	for (int i = 0; i < count; i++)
 	{
-		insert_BST(bst, random());
+		insert_BST(bst, *(data + i));
 	}
 
 	// insert end
@@ -114,7 +104,7 @@ void bst_mode(size_t count, int r, TSaver* saver)
 
 	for (int i = 0; i < r; i++)
 	{
-		element num = random();
+		element num = *(r_data + i);
 
 		search_BST(bst, num);
 	}
@@ -130,7 +120,7 @@ void bst_mode(size_t count, int r, TSaver* saver)
 	saver->find = get_term(&search);
 }
 
-void avl_mode(size_t count, int r, TSaver* saver)
+void avl_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
 	Tick search;
@@ -141,7 +131,7 @@ void avl_mode(size_t count, int r, TSaver* saver)
 	AVLN* avl = create_AVL();
 	for (int i = 0; i < count; i++)
 	{
-		insert_AVL(avl, random());
+		insert_AVL(avl, *(data + i));
 	}
 
 	// insert end
@@ -152,7 +142,7 @@ void avl_mode(size_t count, int r, TSaver* saver)
 
 	for (int i = 0; i < r; i++)
 	{
-		element num = random();
+		element num = *(r_data + i);
 
 		search_AVL(avl, num);
 	}
@@ -182,7 +172,6 @@ void create_file(TSaver* data, size_t count,int mode)
 
 	switch (mode)
 	{
-	case 0: fputs("Check only random()\n", fp); break;
 	case 1: fputs("Linear(array) mode\n", fp); break;
 	case 2: fputs("BST mode\n", fp); break;
 	case 3: fputs("AVL mode\n", fp); break;
@@ -202,32 +191,25 @@ void create_file(TSaver* data, size_t count,int mode)
 int main()
 {
 	int input;
+	element* data;
+	element* r_data;
 
 	while (1)
 	{
-		printf("Select search mode\n 0) Check only random()\n 1) Linear(array)\n 2) BST\n 3) AVL\n 4) exit\n>> ");
+		printf("Select search mode\n 1) Linear(array)\n 2) BST\n 3) AVL\n 4) exit\n>> ");
 		scanf("%d", &input);
 		switch (input)
 		{
-		case 0:
-		{
-			TSaver s[COUNT] = { 0 };
-			
-			for (int i = 1; i <= COUNT; i++)
-			{
-				write_only_mode(i * 500000, s + i - 1);
-			}
-
-			create_file(s, COUNT, 0);
-			break;
-		}
 		case 1: 
 		{
 			TSaver s[COUNT] = { 0 };
 			
 			for (int i = 1; i <= COUNT; i++)
 			{
-				linear_mode(i * 500000, 50, s + i - 1);
+				data = create_random(i * 500000);
+				r_data = create_random(50);
+
+				linear_mode(i * 500000, 50, s + i - 1, data, r_data);
 			}
 
 			create_file(s, COUNT, 1);
@@ -239,7 +221,10 @@ int main()
 
 			for (int i = 1; i <= COUNT; i++)
 			{
-				bst_mode(i * 500000, 100000, s + i - 1);
+				data = create_random(i * 500000);
+				r_data = create_random(100000);
+
+				bst_mode(i * 500000, 100000, s + i - 1, data, r_data);
 			}
 
 			create_file(s, COUNT, 2);
@@ -251,7 +236,10 @@ int main()
 
 			for (int i = 1; i <= COUNT; i++)
 			{
-				avl_mode(i * 500000, 100000, s + i - 1);
+				data = create_random(i * 500000);
+				r_data = create_random(100000);
+
+				avl_mode(i * 500000, 100000, s + i - 1, data, r_data);
 			}
 
 			create_file(s, COUNT, 3);
