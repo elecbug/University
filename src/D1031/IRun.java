@@ -7,10 +7,11 @@ public interface IRun {
     default void menu()
     {
         Scanner scanner = new Scanner(System.in);
+        boolean roof = true;
         
-        while (true)
+        while (roof)
         {
-            System.out.println("메뉴를 선택하세요.\n1) 입력\n2) 검색\n3) 명단");
+            System.out.println("메뉴를 선택하세요.\n1) 입력\n2) 검색\n3) 명단\n4) 종료");
 
             switch(scanner.nextInt())
             {
@@ -18,9 +19,12 @@ public interface IRun {
                 {
                     String name = "";
                     
-                    while (!name.equals("그만"))
+                    while (true)
                     {
                         name = scanner.next();
+                        
+                        if (name.equals("stop")) break;
+
                         insertPerson(name, scanner.nextInt()); 
                     }
                 }
@@ -30,9 +34,12 @@ public interface IRun {
                 {
                     String name = "";
                     
-                    while (!name.equals("그만"))
+                    while (true)
                     {
                         name = scanner.next();
+                        
+                        if (name.equals("stop")) break;
+
                         searchPerson(name); 
                     }
                 }
@@ -41,6 +48,12 @@ public interface IRun {
                 case 3: 
                 {
                     showPerson();
+                }
+                break;
+
+                case 4:
+                {
+                    roof = false;
                 }
                 break;
             }
