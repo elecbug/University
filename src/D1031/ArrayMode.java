@@ -1,5 +1,7 @@
 package D1031;
 
+import java.util.Arrays;
+
 public class ArrayMode implements IRun {
     private Person[] persons;
 
@@ -51,6 +53,8 @@ public class ArrayMode implements IRun {
     @Override
     public void showPerson()
     {
+        Arrays.sort(this.persons);
+        
         for (int i = 0; i < this.persons.length; i++)
         {
             System.out.println((i + 1) + ": " + this.persons[i].getName() +

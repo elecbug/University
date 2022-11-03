@@ -1,6 +1,7 @@
 package D1031;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ArrayListMode implements IRun {
     private ArrayList<Person> persons;
@@ -48,6 +49,8 @@ public class ArrayListMode implements IRun {
     @Override
     public void showPerson()
     {
+        this.persons.sort(Comparator.naturalOrder());
+        
         for (int i = 0; i < this.persons.size(); i++)
         {
             System.out.println((i + 1) + ": " + this.persons.get(i).getName() +

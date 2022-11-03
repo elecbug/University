@@ -1,5 +1,6 @@
 package D1031;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class LinkedListMode implements IRun {
@@ -48,6 +49,8 @@ public class LinkedListMode implements IRun {
     @Override
     public void showPerson()
     {
+        this.persons.sort(Comparator.naturalOrder());
+        
         for (int i = 0; i < this.persons.size(); i++)
         {
             System.out.println((i + 1) + ": " + this.persons.get(i).getName() +

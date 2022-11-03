@@ -1,7 +1,9 @@
 package D1031;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class HashMapMode implements IRun {
     private HashMap<String, Integer> persons;
@@ -45,6 +47,14 @@ public class HashMapMode implements IRun {
     @Override
     public void showPerson()
     {
-        // edit
+        int index = 1;
+
+        List<String> employeeByKey = new ArrayList<>(this.persons.keySet());
+        Collections.sort(employeeByKey);
+
+        for (String key : employeeByKey) 
+        {
+            System.out.println((index++) + ": " + key + ", point: " + this.persons.get(key));
+        }
     }
 }

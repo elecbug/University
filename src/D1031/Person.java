@@ -1,6 +1,6 @@
 package D1031;
 
-public class Person {
+public class Person implements Comparable<Person>{
     String name;
     int point;
     
@@ -24,4 +24,11 @@ public class Person {
     {
         return this.point;
     }
+
+    @Override
+    public int compareTo(Person o) {
+        return this.name.compareTo(o.name);
+    }
+
+    
 }
