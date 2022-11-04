@@ -16,6 +16,7 @@ namespace P1102_S
         private string[] data;
         private Panel panel;
         private Graphics graphics;
+        private Label label;
 
         public MainForm()
         {
@@ -37,6 +38,15 @@ namespace P1102_S
                 BackColor = Color.Black,
                 AllowDrop = true,
             };
+
+            this.label = new Label()
+            {
+                Location = new Point(5, 5),
+                Parent = this.panel,
+                Visible = true,
+                ForeColor = Color.White,
+            };
+
             this.panel.DragEnter += PanelDragEnter;
             this.panel.DragDrop += PanelDragDrop;
 
@@ -61,21 +71,14 @@ namespace P1102_S
             Debug.WriteLine(reader.ToString());
             reader.Close();
 
-            new Label()
-            {
-                Location = new Point(5, 5),
-                Parent = this.panel,
-                Visible = true,
-                ForeColor = Color.White,
-                Text = this.data[0],
-            };
+            this.label.Text = this.data[0];
 
             for (int i = 1; i < this.data.Length - 1; i++)
             {
                 try
                 {
-                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[0]) / 2 - 30);
-                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[0]) / 2 - 30);
+                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[0]) / 5 - 30);
+                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[0]) / 5 - 30);
                     Pen pen = new Pen(Color.FromArgb(64, 0, 0, 255), 5);
 
                     this.graphics.DrawLine(pen, p1, p2);
@@ -86,8 +89,8 @@ namespace P1102_S
                 }
                 try
                 {
-                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[1]) / 2 - 30);
-                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[1]) / 2 - 30);
+                    Point p1 = new Point(30 * i, this.panel.Height - int.Parse(this.data[i].Trim().Split(":")[1]) / 5 - 30);
+                    Point p2 = new Point(30 * (i + 1), this.panel.Height - int.Parse(this.data[i + 1].Trim().Split(":")[1]) / 5 - 30);
                     Pen pen = new Pen(Color.FromArgb(64, 255, 0, 0), 5);
 
                     this.graphics.DrawLine(pen, p1, p2);

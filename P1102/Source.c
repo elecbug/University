@@ -25,6 +25,7 @@ B의 과정과 동일
 #include "BSTFunction.h"
 #include "AVLFunction.h"
 
+// 32 bit로 이루어진 무작위 양의 정수를 발생시킵니다.
 element random()
 {
 	srand(time(0) + rand());
@@ -32,6 +33,7 @@ element random()
 	return rand() * rand();
 }
 
+// count만큼의 인덱스 수를 지닌 element의 배열을 반환합니다.
 element* create_random(size_t count)
 {
 	element* result = (element*)malloc(count * sizeof(element));
@@ -44,6 +46,8 @@ element* create_random(size_t count)
 	return result;
 }
 
+// 배열 모드로 하여 순차 탐색을 시도하고 시간을 측정합니다.
+// count는 요소의 수, r은 탐색 횟수, saver는 걸린 시간을 넘겨받는 포인터, data와 r_data는 삽입과 탐색에 사용할 랜덤 배열입니다.
 void linear_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
@@ -82,6 +86,8 @@ void linear_mode(size_t count, int r, TSaver* saver, element* data, element* r_d
 	saver->find = get_term(&find);
 }
 
+// BST 모드로 하여 탐색을 시도하고 시간을 측정합니다.
+// count는 요소의 수, r은 탐색 횟수, saver는 걸린 시간을 넘겨받는 포인터, data와 r_data는 삽입과 탐색에 사용할 랜덤 배열입니다.
 void bst_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
@@ -120,6 +126,8 @@ void bst_mode(size_t count, int r, TSaver* saver, element* data, element* r_data
 	saver->find = get_term(&search);
 }
 
+// AVL 모드로 하여 탐색을 시도하고 시간을 측정합니다.
+// count는 요소의 수, r은 탐색 횟수, saver는 걸린 시간을 넘겨받는 포인터, data와 r_data는 삽입과 탐색에 사용할 랜덤 배열입니다.
 void avl_mode(size_t count, int r, TSaver* saver, element* data, element* r_data)
 {
 	Tick insert;
@@ -158,7 +166,8 @@ void avl_mode(size_t count, int r, TSaver* saver, element* data, element* r_data
 	saver->find = get_term(&search);
 }
 
-void create_file(TSaver* data, size_t count,int mode)
+// 결과를 시각적으로 표현하기 위해 외부 파일로 추출하기 위한 함수입니다.
+void create_file(TSaver* data, size_t count, int mode)
 {
 	FILE* fp = NULL;
 	char str[255] = "";
