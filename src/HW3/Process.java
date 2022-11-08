@@ -35,9 +35,9 @@ public class Process
         }
 
         // 커맨드를 실행하는 부분
-        for (int i = 0; i < this.manager.commandLenght();)
+        for (int pc = 0; pc < this.manager.commandLenght();)
         {
-            i = this.manager.runCommand(i);
+            pc = this.manager.runCommand(pc);
         }
 
         s.close();
