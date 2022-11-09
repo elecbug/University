@@ -43,4 +43,9 @@ public class Command
     {
         return this.data;
     }
+
+    public String getFullString()
+    {
+        return getOperator() + " " + getParameter() + " " + getData();
+    }
 }

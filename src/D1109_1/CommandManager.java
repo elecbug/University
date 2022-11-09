@@ -20,12 +20,18 @@ public class CommandManager
     private ArrayList<Value> values;
 
     /**
+     * 최후에 작성될 결과 문서에 들어갈 내용을 작성하는 부분이다.
+     */
+    private String result;
+
+    /**
      * 기본 생성자는 리스트를 초기화한다.
      */
     public CommandManager()
     {
         this.commands = new ArrayList<>();
         this.values = new ArrayList<>();
+        result = "";
     }
 
     /**
@@ -178,14 +184,19 @@ public class CommandManager
                 
                 System.out.println("[" + this.commands.get(now).getOperator() + " " + 
                     this.commands.get(now).getParameter() + " " + this.commands.get(now).getData()+ "]");
+                this.result += "[" + this.commands.get(now).getOperator() + " " + 
+                    this.commands.get(now).getParameter() + " " + this.commands.get(now).getData()+ "]\r\n";
 
                 for (Value value : this.values)
                 {
                     System.out.print(value.getName() + ": " + value.getValue() + " ");
+                    result += value.getName() + ": " + value.getValue() + " ";
                 }
                 System.out.println();
+                result += "\r\n";
 
                 System.out.println("Print value: " + this.values.get(index).getValue());
+                this.result += "Print value: " + this.values.get(index).getValue() + "\r\n";
             }
             break;
 
@@ -238,5 +249,30 @@ public class CommandManager
         }
         
         return true;
+    }
+
+    /**
+     * 인풋 커맨드를 모두 반환한다.
+     * @return 인풋 커맨드
+     */
+    public String getInputs()
+    {
+        String result = "";
+
+        for (Command command : this.commands)
+        {
+            result+=command.getFullString() + "\r\n";
+        }
+
+        return result;
+    }
+
+    /**
+     * result를 반환한다.
+     * @return 아웃풋
+     */
+    public String getOutputs()
+    {
+        return this.result;
     }
 }

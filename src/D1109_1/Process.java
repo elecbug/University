@@ -1,5 +1,9 @@
 package D1109_1;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -15,7 +19,7 @@ public class Process
     /**
      * 메인 프로세스의 실행 함수로써, 매니저를 초기화하고, 커맨드를 받은 후 실행하는 역할을 수행한다.
      */
-    public void run()
+    public void run() throws IOException
     {
         this.manager = new CommandManager();
     
@@ -34,11 +38,19 @@ public class Process
             this.manager.addCommand(str);
         }
 
+        BufferedWriter writer = new BufferedWriter(new FileWriter(new File("input.dat")));
+        writer.write(this.manager.getInputs());
+        writer.close();
+
         // 커맨드를 실행하는 부분
         for (int pc = 0; pc < this.manager.commandLenght();)
         {
             pc = this.manager.runCommand(pc);
         }
+
+        writer = new BufferedWriter(new FileWriter(new File("result.dat")));
+        writer.write(this.manager.getOutputs());
+        writer.close();
 
         s.close();
     }
