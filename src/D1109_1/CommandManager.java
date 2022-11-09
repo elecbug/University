@@ -1,6 +1,7 @@
 package D1109_1;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * 핵심 클래스로 커맨드를 관리하고 데이터를 저장하는 역할을 수행한다.
@@ -17,7 +18,7 @@ public class CommandManager
     /**
      * 실행 과정에서 필요한 모든 변수 값들은 해당 리스트에 저장된다.
      */
-    private ArrayList<Value> values;
+    private LinkedList<Value> values;
 
     /**
      * 최후에 작성될 결과 문서에 들어갈 내용을 작성하는 부분이다.
@@ -30,7 +31,7 @@ public class CommandManager
     public CommandManager()
     {
         this.commands = new ArrayList<>();
-        this.values = new ArrayList<>();
+        this.values = new LinkedList<>();
         result = "";
     }
 
