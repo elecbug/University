@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct Graph {
 	int V;
@@ -40,13 +41,45 @@ Graph* insert_direct(Graph* G)
 	return G;
 }
 
-Graph* insert_undirect_random(Graph* g) {
-	int u = rand() % 6 + 5;
-	int v;
+Graph* insert_undirect_random(Graph* g)
+{
+	srand(time(0));
+	int v = rand() % 6 + 5;
+	printf("Vertax: %d\n", v);
+	int e = rand() % 6 + 5;
+	printf("Edge: %d\n", e);
+
+	g = AdjMatrix(v, e);
+
+	for (int e = 0; e < g->E; e++)
+	{
+		srand(time(0) + rand());
+
+		int x = rand() % v;
+		int y = rand() % v;
+
+		if (g->Adj[x][y] == 0 && g->Adj[y][x] == 0)
+		{
+			g->Adj[x][y] = 1;
+		}
+		else
+		{
+			e--;
+		}
+	}
+
+	for (int y = 0; y < g->V; y++)
+	{
+		for (int x = 0; x < g->V; x++)
+		{
+			printf("%d ", g->Adj[x][y]);
+		}
+		printf("\n");
+	}
 }
 
 int main()
 {
-	Graph* g = AdjMatrix(4, 5);
-	insert_direct(g);
+	Graph* g = NULL;
+	g = insert_undirect_random(g);
 }
