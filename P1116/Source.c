@@ -93,6 +93,15 @@ void DFS(Graph* G, int u)
 			DFS(G, v);
 		}
 	}
+
+	for (int v = 0; v < G->V; v++)
+	{
+		if (!find(G->list, v))
+		{
+			printf("new start point: %d\n", v);
+			DFS(G, v);
+		}
+	}
 }
 
 int main()
@@ -104,9 +113,9 @@ int main()
 	
 	g1 = insert_direct(g1, 0, 1);
 	g1 = insert_direct(g1, 1, 2);
-	g1 = insert_direct(g1, 1, 7);
+	// g1 = insert_direct(g1, 1, 7);
 	g1 = insert_direct(g1, 2, 3);
-	g1 = insert_direct(g1, 2, 4);
+	// g1 = insert_direct(g1, 2, 4);
 	g1 = insert_direct(g1, 4, 5);
 	g1 = insert_direct(g1, 4, 6);
 	g1 = insert_direct(g1, 4, 7);
