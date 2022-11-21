@@ -71,4 +71,4 @@ void BFS(Graph* G, int u) {
 				enQueue(Q, v);
 		}
 	}
-}
+}
