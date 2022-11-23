@@ -1,6 +1,5 @@
 package D1121;
 
-
 import java.awt.*;
 import javax.swing.*;
 
@@ -9,7 +8,7 @@ import java.awt.event.*;
 public class CalFrame extends JFrame 
 {
     private enum Operator { NA, Add, Sub, Mul, Div}
-    private JTextField field;
+    private JLabel field;
     private JButton[] buttons;
 
     private String op1, op2;
@@ -18,7 +17,7 @@ public class CalFrame extends JFrame
  
     public CalFrame()
     {
-        this.field = new JTextField();
+        this.field = new JLabel();
         this.buttons = 
         new JButton[] {
             new JButton("C"),
@@ -77,14 +76,14 @@ public class CalFrame extends JFrame
 
     class ButtonClick implements ActionListener
     {
-        private int answer()
+        private double answer()
         {
             switch(op)
             {
-                case Add: return Integer.parseInt(op1) + Integer.parseInt(op2);
-                case Sub: return Integer.parseInt(op1) - Integer.parseInt(op2);
-                case Mul: return Integer.parseInt(op1) * Integer.parseInt(op2);
-                case Div: return Integer.parseInt(op1) / Integer.parseInt(op2);
+                case Add: return Double.parseDouble(op1) + Double.parseDouble(op2);
+                case Sub: return Double.parseDouble(op1) - Double.parseDouble(op2);
+                case Mul: return Double.parseDouble(op1) * Double.parseDouble(op2);
+                case Div: return Double.parseDouble(op1) / Double.parseDouble(op2);
                 default: return 0;
             }
         }
@@ -105,9 +104,9 @@ public class CalFrame extends JFrame
                     }
                     else
                     {
+                        op1 = "" + answer();
                         field.setText(op1);
                         op2 = "";
-                        op1 = "" + answer();
                         op = Operator.Add;
                     }
                 } break;
@@ -120,9 +119,9 @@ public class CalFrame extends JFrame
                     }
                     else
                     {
+                        op1 = "" + answer();
                         field.setText(op1);
                         op2 = "";
-                        op1 = "" + answer();
                         op = Operator.Sub;
                     }
                 } break;
@@ -135,9 +134,9 @@ public class CalFrame extends JFrame
                     }
                     else
                     {
+                        op1 = "" + answer();
                         field.setText(op1);
                         op2 = "";
-                        op1 = "" + answer();
                         op = Operator.Mul;
                     }
                 } break;
@@ -150,9 +149,9 @@ public class CalFrame extends JFrame
                     }
                     else
                     {
+                        op1 = "" + answer();
                         field.setText(op1);
                         op2 = "";
-                        op1 = "" + answer();
                         op = Operator.Div;
                     }
                 } break;
@@ -160,7 +159,9 @@ public class CalFrame extends JFrame
                 {
                     op1 = "";
                     op2 = "";
+                    selectOp2 = false;
                     op = Operator.NA;
+                    field.setText(op1);
                 } break;
                 case "=": 
                 {
@@ -172,16 +173,16 @@ public class CalFrame extends JFrame
                 } break;
                 default: 
                 {
-                    int data = Integer.parseInt(b.getText());
+                    Double data = Double.parseDouble(b.getText());
 
                     if (selectOp2) 
                     {
-                        op2 += data;
+                        op2 = "" + (Double.parseDouble(op2.equals("") ? "0" : op2) * 10 + data);
                         field.setText(op2);
                     }
                     else 
                     {
-                        op1 += data;
+                        op1 = "" + (Double.parseDouble(op1.equals("") ? "0" : op1) * 10 + data);
                         field.setText(op1);
                     }
                 } break;
