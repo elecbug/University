@@ -26,6 +26,8 @@ Queue* createQueue()
 	result->head = (Node*)malloc(sizeof(Node));
 	result->head->data = 0;
 	result->head->link = 0;
+
+	return result;
 }
 
 int isEmpty(Queue* q)
@@ -70,5 +72,40 @@ void BFS(Graph* G, int u) {
 			if (!Visited[v] && G->Adj[u][v])
 				enQueue(Q, v);
 		}
+	}
+}
+
+int main()
+{
+	Graph* g = (Graph*)malloc(sizeof(Graph));
+
+	g->V = 7;
+	g->E = 6;
+	g->Adj = (int**)malloc(sizeof(int*) * 7);
+
+	for (int i = 0; i < 7; i++)
+	{
+		g->Adj[i] = (int*)malloc(sizeof(int) * 7);
+
+		for (int j = 0; j < 7; j++)
+		{
+			g->Adj[i][j] = 0;
+		}
+	}
+
+	g->Adj[1 - 1][2 - 1] = g->Adj[2 - 1][1 - 1] = 1;
+	g->Adj[2 - 1][3 - 1] = g->Adj[3 - 1][2 - 1] = 1;
+	g->Adj[1 - 1][5 - 1] = g->Adj[5 - 1][1 - 1] = 1;
+	g->Adj[2 - 1][5 - 1] = g->Adj[5 - 1][2 - 1] = 1;
+	g->Adj[6 - 1][5 - 1] = g->Adj[5 - 1][6 - 1] = 1;
+	g->Adj[4 - 1][7 - 1] = g->Adj[7 - 1][4 - 1] = 1;
+
+	BFS(g, 0);
+
+	printf("\n감염된 컴퓨터: ");
+	for (int i = 0; i < 7; i++)
+	{
+		if (Visited[i] == 1)
+			printf("%d, ", i + 1);
 	}
 }
