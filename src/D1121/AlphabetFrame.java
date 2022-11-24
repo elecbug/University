@@ -42,7 +42,7 @@ public class AlphabetFrame  extends JFrame
 					JLabel la = (JLabel)e.getSource();
                     if (count + (int)'A' == (int)(la.getText().charAt(0)))
                     {
-                        la.setSize(0,0);
+                        la.setVisible(false);
                         count++;
                     }
                     if(count == 26) 
