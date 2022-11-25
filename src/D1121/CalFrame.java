@@ -78,6 +78,14 @@ public class CalFrame extends JFrame
     {
         private double answer()
         {
+            try
+            {
+                Double.parseDouble(op1);
+            }
+            catch(Exception e)
+            {
+                op1 = "0";
+            }
             switch(op)
             {
                 case Add: return Double.parseDouble(op1) + Double.parseDouble(op2);
