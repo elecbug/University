@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int unsorted_linear(int arr[], int n, int key, int* count)
+int unsorted_linear(int try, int arr[], int n, int key, int* count)
 {
 	printf("find %d\n", key);
 
@@ -10,9 +10,9 @@ int unsorted_linear(int arr[], int n, int key, int* count)
 	
 	while (pivot < n)
 	{
-		*count++;
+		(*count)++;
 
-		printf("%try %4d: arr[%d]: %d\n", *count, pivot, arr[pivot]);
+		printf("%4d try. %4d: arr[%d]: %d\n", try, *count, pivot, arr[pivot]);
 
 		if (arr[pivot] == key) return pivot;
 		else pivot++;
@@ -21,7 +21,7 @@ int unsorted_linear(int arr[], int n, int key, int* count)
 	return -1;
 }
 
-int sorted_linear(int arr[], int n, int key, int* count)
+int sorted_linear(int try, int arr[], int n, int key, int* count)
 {
 	printf("find %d\n", key);
 
@@ -29,9 +29,9 @@ int sorted_linear(int arr[], int n, int key, int* count)
 
 	while (pivot < n && arr[pivot] <= key)
 	{
-		*count++;
+		(*count)++;
 
-		printf("%try %4d: arr[%d]: %d\n", *count, pivot, arr[pivot]);
+		printf("%4d try. %4d: arr[%d]: %d\n", try, *count, pivot, arr[pivot]);
 
 		if (arr[pivot] == key) return pivot;
 		else pivot++;
@@ -40,21 +40,21 @@ int sorted_linear(int arr[], int n, int key, int* count)
 	return -1;
 }
 
-int binay_search(int arr[], int begin, int end, int key, int* count)
+int binary_search(int try, int arr[], int begin, int end, int key, int* count)
 {
-	*count++;
+	(*count)++;
 
 	printf("find %d\n", key);
 
 	int pivot = (end + begin) / 2;
 
-	if (end == begin) return -1;
+	if (end <= begin) return -1;
 
-	printf("%try %4d: arr[%d]: %d\n", *count, pivot, arr[pivot]);
+	printf("%4d try. %4d: arr[%d]: %d\n", try, *count, pivot, arr[pivot]);
 
 	if (arr[pivot] == key) return pivot;
-	else if (arr[pivot] > key) return binay_search(arr, begin, pivot - 1, key, count);
-	else if (arr[pivot] < key) return binay_search(arr, pivot + 1, end, key, count);
+	else if (arr[pivot] > key) return binary_search(try, arr, begin, pivot - 1, key, count);
+	else if (arr[pivot] < key) return binary_search(try, arr, pivot + 1, end, key, count);
 	else return -1;
 }
 
@@ -84,15 +84,36 @@ int main()
 
 	shuffle(unsorted, 1000);
 
-	int counter[6] = {0};
-	int i = 0;
+	int counter[3] = { 0 };
+	double sum[3] = { 0 };
 
-	printf("last index: arr[%d]\n\n", unsorted_linear(unsorted, sizeof(unsorted) / 4, 5, &counter[i++]));
+	for (int i = 0; i < 100; i++)
+	{
+		int randn = rand() % 4000 + 1;
+
+		printf("last index: arr[%d]\n\n", unsorted_linear(i + 1, unsorted, sizeof(unsorted) / 4, randn, &counter[0]));
+
+		printf("last index: arr[%d]\n\n", sorted_linear(i + 1, sorted, sizeof(sorted) / 4, randn, &counter[1]));
+
+		printf("last index: arr[%d]\n\n", binary_search(i + 1, sorted, 0, sizeof(sorted) / 4 - 1, randn, &counter[2]));
+
+		for (int j = 0; j < 3; j++)
+		{
+			sum[j] += counter[j];
+			counter[j] = 0;
+		}
+	}
+
+	printf("unsorted_linear's average: %llf\n", sum[0] / 100);
+	printf("sorted_linear's average: %llf\n", sum[1] / 100);
+	printf("binary_search's average: %llf\n", sum[2] / 100);
+
+	/*printf("last index: arr[%d]\n\n", unsorted_linear(unsorted, sizeof(unsorted) / 4, 5, &counter[i++]));
 	printf("last index: arr[%d]\n\n", unsorted_linear(unsorted, sizeof(unsorted) / 4, 10, &counter[i++]));
 
 	printf("last index: arr[%d]\n\n", sorted_linear(sorted, sizeof(sorted) / 4, 5, &counter[i++]));
 	printf("last index: arr[%d]\n\n", sorted_linear(sorted, sizeof(sorted) / 4, 10, &counter[i++]));
 
 	printf("last index: arr[%d]\n\n", binay_search(sorted, 0, sizeof(sorted) / 4 - 1, 5, &counter[i++]));
-	printf("last index: arr[%d]\n\n", binay_search(sorted, 0, sizeof(sorted) / 4 - 1, 10, &counter[i++]));
+	printf("last index: arr[%d]\n\n", binay_search(sorted, 0, sizeof(sorted) / 4 - 1, 10, &counter[i++]));*/
 }
