@@ -1,19 +1,24 @@
 package HW4;
 
-import javax.swing.*;
-
+import java.awt.Container;
+import java.awt.Dialog.ModalityType;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.Random;
+
+import javax.swing.*;
 
 public class Frame extends JFrame 
 {
     private JPanel panel;
+    private UserInfo info;
 
     public Frame()
     {
         this.panel = new StartPanel(this);
-        
+
         setTitle("두더지 잡기");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(this.panel);
@@ -23,125 +28,78 @@ public class Frame extends JFrame
 
     public void gameStart()
     {
-        this.panel = new GamePanel(this);
+        this.info = new UserInfo(((StartPanel)this.panel).getName());
+        this.panel.setVisible(false);
+        this.panel = new GamePanel(this, this.info, 5);
         setContentPane(this.panel);
+        new Thread((GamePanel)this.panel).start();
+    }
+
+    public void restart()
+    {
+        this.info = new UserInfo(this.info.getName());
+        this.panel.setVisible(false);
+        this.panel = new GamePanel(this, this.info, 5);
+        setContentPane(this.panel);
+        new Thread((GamePanel)this.panel).start();
     }
 
     public void viewLog()
     {
+        JDialog modelDialog = new JDialog(this, "View logs", ModalityType.DOCUMENT_MODAL);
 
-    }
-}
+        modelDialog.setBounds(132, 132, 300, 900);
 
-class Mole extends JLabel
-{
-    private GamePanel panel;
+        Container dialogContainer = modelDialog.getContentPane();
+        dialogContainer.setLayout(new BorderLayout());
 
-    public Mole(GamePanel panel)
-    {
-        this.panel = panel;
-        
-        ImageIcon icon = new ImageIcon("src/HW4/mole.png");
-        Image image = icon.getImage();
-        Image newimg = image.getScaledInstance(100, 100,  java.awt.Image.SCALE_SMOOTH);
-        icon = new ImageIcon(newimg);
+        File file = new File("src/HW4/log.txt");
+        String str = "";  
 
-
-        setLocation(new Point(0,0));
-        setIcon(icon);
-        setSize(100, 100);
-        setVisible(true);
-        setAlignmentY(TOP_ALIGNMENT);
-        
-        addMouseListener(new MouseAdapter() 
+        try
         {
-            @Override
-            public void mousePressed(MouseEvent e)
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            String temp;
+            while ((temp = reader.readLine()) != null) 
             {
-                panel.increaseGrade();
-                setVisible(false);   
+                str += temp + "\r\n";
             }
-        });
+
+            reader.close();  
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+
+        JTextArea label = new JTextArea(str);
+        label.setEditable(false);
+        label.setAutoscrolls(true);
+
+        dialogContainer.add(label);
+
+        JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout());
+
+        modelDialog.setVisible(true);
     }
-}
 
-class GamePanel extends JPanel
-{
-    private Frame parent;
-    private int grade;
-
-    public void increaseGrade()
+    public void goMain() 
     {
-        this.grade += 100;
-    }
+        this.panel.setVisible(false);
+        this.panel = new StartPanel(this);
 
-    public GamePanel(Frame parent)
-    {
-        this.parent = parent;
-        setLayout(null);
-        setSize(parent.getWidth(), parent.getHeight());
-
-        JLabel background = new JLabel(new ImageIcon("src/HW4/fields.png"));
-        background.setSize(parent.getWidth(), parent.getHeight());
-        add(background);
+        setContentPane(this.panel);
+        setSize(400, 700);
         setVisible(true);
-
-        add(new Mole(this));
     }
-}
 
-class StartPanel extends JPanel
-{
-    private Frame parent;
-    private JTextField name;
-    private JButton start;
-    private JButton log;
-    private ImageIcon image;
-
-    public StartPanel(Frame parent)
+    public void next(int time)
     {
-        this.parent = parent;
-
-        setLayout(new FlowLayout());
-        this.name = new JTextField();
-        this.start = new JButton();
-        this.log = new JButton();
-        this.image = new ImageIcon("src/HW4/mole.png");
-
-        JLabel label = new JLabel(this.image);
-        label.setSize(this.getWidth(), this.getWidth());
-        add(label);
-        this.parent.pack();
-        
-        JPanel half = new JPanel();
-        half.setSize(this.getWidth(), this.getHeight());
-        add (half);
-        half.setLayout(new GridLayout(3, 1));
-
-        half.add(this.name);
-
-        half.add(this.start);
-        this.start.setText("Game start!");
-        
-        half.add(this.log);
-        this.log.setText("View before games log.");
-
-        this.start.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                parent.gameStart();   
-            }   
-        });
-
-        this.log.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e) 
-            {
-                parent.viewLog();  
-            }   
-        });
+        this.panel.setVisible(false);
+        this.panel = new GamePanel(this, this.info, time);
+        setContentPane(this.panel);
+        new Thread((GamePanel)this.panel).start();
     }
 }

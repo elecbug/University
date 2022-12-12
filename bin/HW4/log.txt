@@ -1,0 +1,10 @@
+Name: abcd
+Grade:900
+Time: Mon Dec 12 22:53:26 KST 2022
+Win: True
+
+Name: abc
+Grade:200
+Time: Mon Dec 12 22:51:48 KST 2022
+Win: False
+
