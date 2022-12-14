@@ -83,23 +83,11 @@ void iterative_merge_sort(int* arr, int left, int right)
 	Node* stack = (Node*)malloc(sizeof(Node));
 	stack->next = NULL;
 
-	while (1)
+	for (int i = 1; i < right; i *= 2)
 	{
-		push(stack, left, right);
-		if (left < right)
+		for (int j = 0; j < i; j++)
 		{
-			top(stack, &left, &right);
-			int mid = (right + left) / 2;
-
-			if (mid + 1 < right)
-			{
-				push(stack, mid + 1, right);
-			}
-			if (left < mid)
-			{
-				push(stack, left, mid);
-			}
-			top(stack, &left, &right);
+			push(stack, (right + 1) / i * j, (right + 1) / i * (j + 1) - 1);
 		}
 	}
 
