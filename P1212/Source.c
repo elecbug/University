@@ -70,12 +70,6 @@ void recursive_merge_sort(int* arr, int left, int right)
 		}
 
 		free(temp);
-
-		for (int i = 0; i < SIZE; i++)
-		{
-			printf("%d -> ", arr[i]);
-		}
-		printf("\n");
 	}
 }
 void iterative_merge_sort(int* arr, int left, int right)
@@ -120,12 +114,6 @@ void iterative_merge_sort(int* arr, int left, int right)
 		}
 
 		free(temp);
-
-		for (int i = 0; i < SIZE; i++)
-		{
-			printf("%d -> ", arr[i]);
-		}
-		printf("\n");
 	}
 }
 
