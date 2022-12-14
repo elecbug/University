@@ -51,7 +51,9 @@ class GamePanel extends JPanel implements Runnable
             for (int i = 3; i >= 0; i--)
             {
                 Thread.sleep(1000);
+                this.parent.setTitle("" + i + " sec...");
             }
+            this.parent.setTitle("stage " + (this.time == 5 ? 1 : (this.time == 3 ? 2 : 3)));
         }
         catch (Exception ex)
         {
