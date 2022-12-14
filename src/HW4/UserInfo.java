@@ -54,7 +54,7 @@ class UserInfo implements Serializable
     public void write(boolean win) 
     {
         File file = new File("src/HW4/log.txt");
-        String str = "Name: " + getName() + "\r\nGrade:" + getGrade() + "\r\nTime: " + Calendar.getInstance().getTime().toString() + 
+        String str = "Name: " + getName() + "\r\nGrade: " + getGrade() + "\r\nTime: " + Calendar.getInstance().getTime().toString() + 
             "\r\nWin: " + (win ? "True" : "False") + "\r\n\r\n";
         try
         {
