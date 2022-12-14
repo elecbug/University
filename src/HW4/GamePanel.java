@@ -53,7 +53,7 @@ class GamePanel extends JPanel implements Runnable
                 Thread.sleep(1000);
                 this.parent.setTitle("" + i + " sec...");
             }
-            this.parent.setTitle("stage " + (this.time == 5 ? 1 : (this.time == 3 ? 2 : 3)));
+            this.parent.setTitle("stage " + (this.time == 3 ? 1 : (this.time == 2 ? 2 : 3)));
         }
         catch (Exception ex)
         {
@@ -87,11 +87,11 @@ class GamePanel extends JPanel implements Runnable
         }
         else
         {
-            if (time - 2 > 0)
+            if (time - 1 > 0)
             {
                 info.addSum();
                 info.setGrade();
-                parent.next(time - 2);
+                parent.next(time - 1);
             }
             else
             {

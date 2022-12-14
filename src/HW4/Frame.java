@@ -30,7 +30,7 @@ public class Frame extends JFrame
     {
         this.info = new UserInfo(((StartPanel)this.panel).getName());
         this.panel.setVisible(false);
-        this.panel = new GamePanel(this, this.info, 5);
+        this.panel = new GamePanel(this, this.info, 3);
         setContentPane(this.panel);
         new Thread((GamePanel)this.panel).start();
     }
@@ -39,7 +39,7 @@ public class Frame extends JFrame
     {
         this.info = new UserInfo(this.info.getName());
         this.panel.setVisible(false);
-        this.panel = new GamePanel(this, this.info, 5);
+        this.panel = new GamePanel(this, this.info, 3);
         setContentPane(this.panel);
         new Thread((GamePanel)this.panel).start();
     }
