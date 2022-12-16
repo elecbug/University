@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define SIZE 10
+#include <time.h>
 
 void swap(int* x, int* y)
 {
@@ -9,77 +9,158 @@ void swap(int* x, int* y)
 	*y = temp;
 }
 
-int middle(int* arr, int start, int end)
+void bubble(int* arr, int len)
 {
-	int f = arr[start];
-	int s = arr[(end + start) / 2];
-	int t = arr[end];
-
-	if (f < s)
+	for (int i = 0; i < len; i++)
 	{
-		if (s < t)
+		for (int j = 0; j < len - 1 - i; j++)
 		{
-			return (end + start) / 2;
-		}
-		else if (f < t)
-		{
-			return end;
-		}
-		else
-		{
-			return start;
-		}
-	}
-	else // s < f
-	{
-		if (f < t)
-		{
-			return start;
-		}
-		else if (s < t)
-		{
-			return end;
-		}
-		else
-		{
-			return (end + start) / 2;
-		}
-	}
-}
-
-void i_sort(int* arr, int start, int end)
-{
-	for (int i = start + 1; i <= end; i++)
-	{
-		for (int j = i; j > 0; j--)
-		{
-			if (arr[j] < arr[j - 1])
+			if (arr[j] > arr[j + 1])
 			{
-				swap(&arr[j], &arr[j - 1]);
+				swap(&arr[j], &arr[j + 1]);
 			}
 		}
 	}
 }
 
-void q_sort(int* arr, int start, int end)
+void selection(int* arr, int len)
+{
+	for (int i = 0; i < len; i++)
+	{
+		int max = 0;
+
+		for (int j = 1; j < len - i; j++)
+		{
+			if (arr[max] < arr[j])
+			{
+				max = j;
+			}
+		}
+
+		if (max != len - 1 - i)
+		{
+			swap(&arr[len - 1 - i], &arr[max]);
+		}
+	}
+}
+
+void insertion(int* arr, int len)
+{
+	for (int i = 1; i < len; i++)
+	{
+		for (int j = i - 1; j >= 0; j--)
+		{
+			if (arr[j] > arr[j + 1])
+			{
+				swap(&arr[j], &arr[j + 1]);
+			}
+		}
+	}
+}
+
+void merge(int* arr, int left, int right)
+{
+	int mid = (right + left) / 2;
+
+	if (right > left)
+	{
+		merge(arr, left, mid);
+		merge(arr, mid + 1, right);
+
+		int* temp = (int*)malloc(sizeof(int) * (right - left + 1));
+		int i = left, j = mid + 1, k = 0;
+
+		while (i <= mid && j <= right)
+		{
+			if (arr[i] < arr[j])
+				temp[k++] = arr[i++];
+			else
+				temp[k++] = arr[j++];
+		}
+		while (k < right - left + 1)
+		{
+			if (i <= mid)
+				temp[k++] = arr[i++];
+			else
+				temp[k++] = arr[j++];
+		}
+
+		for (int in = 0; in < right - left + 1; in++)
+		{
+			arr[in + left] = temp[in];
+		}
+
+		free(temp);
+	}
+}
+
+int left(int l, int x) { return (l - 1) / 2 > x ? x * 2 + 1 : -1; }
+int right(int l, int x) { return (l - 1) / 2 > x ? x * 2 + 2 : -1; }
+int parent(int x) { return (x - 1) / 2 >= 0; }
+void percolate_down(int* arr, int len, int i) 
+{
+	int l, r, max, temp;
+	l = left(len, i);
+	r = right(len, i);
+	if (l != -1 && arr[l] > arr[i]) 
+		max = l;
+	else 
+		max = i;
+	if (r != -1 && arr[r] > arr[max]) 
+		max = r;
+	if (max != i) 
+	{
+		temp = arr[i];
+		arr[i] = arr[max];
+		arr[max] = temp;
+		percolate_down(arr, len, max);
+	}
+}
+void percolate_up(int* arr, int len, int i) 
+{
+	int p, min, temp;
+	p = parent(i);
+	if (p > -1 && arr[p] < arr[i]) 
+		min = p;
+	else 
+		min = i;
+	if (min != i) {
+		temp = arr[i];
+		arr[i] = arr[min];
+		arr[min] = temp;
+		percolate_up(arr, len, min);
+	}
+}
+void heap(int* arr, int len)
+{
+	for (int i = len - 1; i >= 0; i--)
+	{
+		percolate_up(arr, len, i);
+	}
+	while (len > 0)
+	{
+		swap(&arr[0], &arr[len - 1]);
+		len--;
+		percolate_down(arr, len, 0);
+	}
+}
+
+void quick(int* arr, int start, int end, int reculsive)
 {
 	if (start < end)
 	{
 		int f_start = start, f_end = end;
-
-		int pivot = middle(arr, start, end);
-		swap(&arr[end], &arr[pivot]);
-		pivot = end;
+		int pivot = end;
 
 		end--;
 
 		while (start <= end)
 		{
-			while (arr[start] < arr[pivot])
+			while (arr[start] <= arr[pivot])
 			{
 				start++;
 			}
-			while (arr[pivot] < arr[end])
+			while (arr[pivot] <= arr[end])
 			{
 				end--;
 			}
@@ -88,32 +169,97 @@ void q_sort(int* arr, int start, int end)
 		swap(&arr[start], &arr[end]);
 		swap(&arr[pivot], &arr[end + 1]);
 
-		for (int i = 0; i < SIZE; i++)
+		if (reculsive < 20)
 		{
-			printf("%d -> ", arr[i]);
+			quick(arr, f_start, end, reculsive + 1);
+			quick(arr, end + 2, f_end, reculsive + 1);
 		}
-		printf("\n");
-
-		if (end - f_start > 10)
-			q_sort(arr, f_start, end);
 		else
-			i_sort(arr, f_start, end);
-		if (f_end - (end + 2) > 10)
-			q_sort(arr, end + 2, f_end);
-		else
-			i_sort(arr, end + 2, f_end);
+		{
+			heap(arr, f_start, end);
+			heap(arr, end + 2, f_end);
+		}
 	}
 }
 
 int main()
 {
-	int arr[] = { 0,2,4,6,8,9,7,5,3,1 };
-
-	q_sort(arr, 0, SIZE - 1);
-
-	for (int i = 0; i < SIZE; i++)
+	// for (int type = 1; type <= 4; type++)
 	{
-		printf("%d -> ", arr[i]);
+		int type;
+		printf("1. sorted 2. reverse sorted 3. random 4. only 1\n");
+		scanf_s("%d", &type);
+		printf("\n\n");
+
+		for (int sort = 1; sort <= 6; sort ++)
+		{
+			printf("1. bubble 2. selection 3. insertion 4. merge 5. heap 6. quick\n%d\n", sort);
+
+			for (int size = 5000; size <= 60000; size += 5000)
+			{
+				int* arr = (int*)malloc(sizeof(int) * size);
+				printf("making array... ");
+
+				switch (type)
+				{
+				case 1:
+					for (int i = 0; i < size; i++)
+					{
+						arr[i] = i;
+					}
+					break;
+				case 2:
+					for (int i = 0; i < size; i++)
+					{
+						arr[i] = size - i;
+					}
+					break;
+				case 3:
+					for (int i = 0; i < size; i++)
+					{
+						srand(time(0));
+						arr[i] = rand() % size;
+					}
+					break;
+				case 4:
+					for (int i = 0; i < size; i++)
+					{
+						arr[i] = 1;
+					}
+					break;
+				default:
+					break;
+				}
+
+				clock_t c = clock();
+
+				switch (sort)
+				{
+				case 1:
+					bubble(arr, size);
+					break;
+				case 2:
+					selection(arr, size);
+					break;
+				case 3:
+					insertion(arr, size);
+					break;
+				case 4:
+					merge(arr, 0, size - 1);
+					break;
+				case 5:
+					heap(arr, size);
+					break;
+				case 6:
+					quick(arr, 0, size - 1, 0);
+					break;
+				}
+
+				printf("%5d data array, used time: %.3lf secs\n", size, (clock() - c) / (float)1000);
+				free(arr);
+			}
+
+			printf("\n\n");
+		}
 	}
-	printf("\n");
 }
