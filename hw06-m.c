@@ -39,12 +39,15 @@ void* recursive_merge_sort(void* input)
         // 스레드 여부 필드만큼의 재귀 함수를 멀티 스레드로 실행
         if (params->is_threaded > 0)
         {
-            pthread_t sub_l, sub_r;
-            int status_l, status_r;
+            pthread_t sub_l;
+            int status_l;
 
+            // 좌측 분할을 스레드로 구동하고
             pthread_create(&sub_l, NULL, recursive_merge_sort, (void*)&left);
+            // 현재 스레드는 우측 분할을 구동한 뒤
             recursive_merge_sort(&right);  
 
+            // 좌측 분할이 종료될 때 까지 대기한다.
             pthread_join(sub_l, (void**)&status_l);
         }
         // 일반 실행 루틴
