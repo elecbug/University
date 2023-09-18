@@ -98,7 +98,7 @@ namespace UnivSecurity
                 result[i] = last[Table.InverseInitialPermutation[i] - 1];
             }
 
-            this.output = last;
+            this.output = result;
         }
 
         public void Decrypt()
