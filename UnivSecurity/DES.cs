@@ -107,7 +107,7 @@ namespace UnivSecurity
 
             for (int i = 0; i < 64; i++)
             {
-                ip[Table.InitialPermutation[i] - 1] = this.input[i];
+                ip[i] = this.input[Table.InitialPermutation[i] - 1];
             }
 
             BitArray left = new BitArray(32);
@@ -170,7 +170,7 @@ namespace UnivSecurity
 
             for (int i = 0; i < 64; i++)
             {
-                result[Table.InverseInitialPermutation[i] - 1] = last[i];
+                result[i] = last[Table.InverseInitialPermutation[i] - 1];
             }
 
             this.output = result;
