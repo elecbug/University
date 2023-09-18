@@ -10,6 +10,8 @@ namespace UnivSecurity
 {
     public class DES
     {
+        public bool DebugMode { get; set; }
+
         public static DES? Service = null;
         
         public static void CreateDES()
@@ -26,20 +28,154 @@ namespace UnivSecurity
 
         public void Encrypt()
         {
+            BitArray ip = new BitArray(64);
+
+            for (int i = 0; i < 64; i++)
+            {
+                ip[i] = this.input[Table.InitialPermutation[i] - 1];
+            }
+
             BitArray left = new BitArray(32);
             BitArray right = new BitArray(32);
 
             for (int i = 0; i < 32; i++)
             {
-                left[i] = this.input[i];
+                left[i] = ip[i];
             }
             for (int i = 0; i < 32; i++)
             {
-                right[i] = this.input[i + 32];
+                right[i] = ip[i + 32];
             }
 
+            for (int i = 0; i < 16; i++)
+            {
+                BitArray left_next = new BitArray(right);
+                BitArray f = FunctionF(right, this.key);
+                BitArray right_next = left.Xor(f);
 
+                if (this.DebugMode)
+                {
+                    Console.WriteLine("next left: ");
+                    for (int j = 0; j < left_next.Length; j++)
+                    {
+                        Console.Write(left_next[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("to f-function: ");
+                    for (int j = 0; j < f.Length; j++)
+                    {
+                        Console.Write(f[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("next right: ");
+                    for (int j = 0; j < right_next.Length; j++)
+                    {
+                        Console.Write(right_next[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+
+                left = left_next;
+                right = right_next;
+            }
+
+            BitArray last = new BitArray(64);
+
+            for (int i = 0; i < 32; i++)
+            {
+                last[i] = right[i];
+            }
+            for (int i = 0; i < 32; i++)
+            {
+                last[i + 32] = left[i];
+            }
+
+            BitArray result = new BitArray(64);
+
+            for (int i = 0; i < 64; i++)
+            {
+                result[i] = last[Table.InverseInitialPermutation[i] - 1];
+            }
+
+            this.output = last;
         }
+
+        public void Decrypt()
+        {
+            BitArray ip = new BitArray(64);
+
+            for (int i = 0; i < 64; i++)
+            {
+                ip[Table.InverseInitialPermutation[i] - 1] = this.input[i];
+            }
+
+            BitArray left = new BitArray(32);
+            BitArray right = new BitArray(32);
+
+            for (int i = 0; i < 32; i++)
+            {
+                left[i] = ip[i];
+            }
+            for (int i = 0; i < 32; i++)
+            {
+                right[i] = ip[i + 32];
+            }
+
+            for (int i = 0; i < 16; i++)
+            {
+                BitArray left_next = new BitArray(right);
+                BitArray f = FunctionF(right, this.key);
+                BitArray right_next = left.Xor(f);
+
+                if (this.DebugMode)
+                {
+                    Console.WriteLine("next left: ");
+                    for (int j = 0; j < left_next.Length; j++)
+                    {
+                        Console.Write(left_next[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("to f-function: ");
+                    for (int j = 0; j < f.Length; j++)
+                    {
+                        Console.Write(f[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine("next right: ");
+                    for (int j = 0; j < right_next.Length; j++)
+                    {
+                        Console.Write(right_next[j] ? "1 " : "0 ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+
+                left = left_next;
+                right = right_next;
+            }
+
+            BitArray last = new BitArray(64);
+
+            for (int i = 0; i < 32; i++)
+            {
+                last[i] = right[i];
+            }
+            for (int i = 0; i < 32; i++)
+            {
+                last[i + 32] = left[i];
+            }
+
+            BitArray result = new BitArray(64);
+
+            for (int i = 0; i < 64; i++)
+            {
+                result[Table.InitialPermutation[i] - 1] = last[i];
+            }
+
+            this.output = result;
+        }
+
 
         private BitArray FunctionF(BitArray input, BitArray key)
         {
@@ -54,19 +190,74 @@ namespace UnivSecurity
             {
                 expansion[i] = input[Table.ExpansionPermutationTable[i]];
             }
+            if (this.DebugMode)
+            {
+                Console.WriteLine("expansion: ");
+                for (int i = 0; i < 48; i++)
+                {
+                    Console.Write(expansion[i] ? "1 " : "0 ");
+                }
+                Console.WriteLine();
+            }
 
             expansion = expansion.Xor(key);
 
-            List<BitArray> blocks = new List<BitArray>();
+            List<BitArray> blocks = new List<BitArray>(new BitArray[8]);
 
+            if (this.DebugMode)
+            {
+                Console.WriteLine("each blocks: ");
+            }
             for (int i = 0; i < 8; i++)
             {
+                blocks[i] = new BitArray(6);
+
                 for (int j = 0; j < 6; j++) 
                 {
-                    blocks[i][j] = expansion[i * 8 + j];
+                    blocks[i][j] = expansion[i * 6 + j];
                 }
+                if (this.DebugMode)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+                        Console.Write(blocks[i][j] ? "1 " : "0 ");
+                    }
+                }
+
                 blocks[i] = SBoxes(blocks[i], i);
             }
+            if (this.DebugMode) 
+            {
+                Console.WriteLine();
+
+                Console.WriteLine("s-boxes: ");
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Console.Write(blocks[i][j] ? "1 " : "0 ");
+                    }
+                }
+                Console.WriteLine();
+            }
+
+            BitArray result = new BitArray(32);
+
+            for (int i = 0; i < 32; i++)
+            {
+                result[Table.PermutationTable[i]] = blocks[i / 4][i % 4];
+            }
+            if (this.DebugMode)
+            {
+                Console.WriteLine("permutation: ");
+                for (int i = 0; i < 32; i++)
+                {
+                    Console.Write(result[i] ? "1 " : "0 ");
+                }
+                Console.WriteLine();
+            }
+
+            return result;
         }
 
         private BitArray SBoxes(BitArray input, int box_num)
@@ -82,24 +273,57 @@ namespace UnivSecurity
                 = (input[1] ? 1 : 0) * 0b1000 + (input[2] ? 1 : 0) * 0b0100 
                 + (input[3] ? 1 : 0) * 0b0010 + (input[4] ? 1 : 0) * 0b0001;
 
-            BitArray result = new BitArray(6);
+            BitArray result = new BitArray(4);
 
-            for (int i = 0; i < input.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
-                result[i] = (Table.SBoxes[box_num][row, column] & (0b100_000 >> i)) != 0;
+                result[i] = (Table.SBoxes[box_num][row, column] & (0b1000 >> i)) != 0;
             }
 
             return result;
         }
 
         private BitArray input = new BitArray(64);
-        public BitArray Input { get => this.input; }
+        public BitArray Input 
+        {
+            get => this.input; 
+            set 
+            {
+                if (value.Length != 64)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this.input = value;
+            }
+        }
 
         private BitArray output = new BitArray(64);
-        public BitArray Output { get => this.output; }
+        public BitArray Output
+        {
+            get => this.output;
+            set
+            {
+                if (value.Length != 64)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this.output = value;
+            }
+        }
 
         private BitArray key = new BitArray(56);
-        public BitArray Key { get => this.key; }
+        public BitArray Key
+        {
+            get => this.key;
+            set
+            {
+                if (value.Length != 48)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this.key = value;
+            }
+        }
 
         private class Table
         {
