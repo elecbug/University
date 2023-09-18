@@ -1,23 +1,57 @@
 ﻿using System.Collections;
-using UnivSecurity;
 
-DES.CreateDES();
-DES.Service.Input = new BitArray(64, true);
-DES.Service.Input[2] = false;
-DES.Service.DebugMode = true;
-DES.Service.Key = new BitArray(48, true);
-DES.Service.Encrypt();
-
-BitArray output = DES.Service.Output;
-
-DES.Service.Input = output;
-DES.Service.Decrypt();
-
-output = DES.Service.Output;
-
-for (int i = 0; i < 64; i++)
+namespace UnivSecurity
 {
-    Console.Write(output[i] ? "1 " : "0 ");
-}
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            List<BitArray> input = BitArrayManager.To64Bits(Console.ReadLine()!);
+            List<DES> des1 = new List<DES>();
+            List<BitArray> output = new List<BitArray>();
 
-Console.WriteLine();
+            for (int i = 0; i < input.Count; i++)
+            {
+                des1.Add(new DES()
+                {
+                    Input = input[i],
+                    Key = new BitArray(56, true),
+                });
+
+                des1[i].Encrypt();
+                output.Add(des1[i].Output);
+
+                Console.WriteLine("Cipher Text");
+                for (int j = 0; j < 64; j++)
+                {
+                    Console.Write(output[i][j] ? "1 " : "0 ");
+                }
+                Console.WriteLine();
+            }
+
+            List<DES> des2 = new List<DES>();
+            List<BitArray> rebirth = new List<BitArray>();
+
+            for (int i = 0; i < output.Count; i++)
+            {
+                des2.Add(new DES()
+                {
+                    Input = output[i],
+                    Key = new BitArray(56, true),
+                });
+
+                des2[i].Decrypt();
+                rebirth.Add(des2[i].Output);
+
+                Console.WriteLine("Rebirth Text: ");
+                for (int j = 0; j < 64; j++)
+                {
+                    Console.Write(rebirth[i][j] ? "1 " : "0 ");
+                }
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(BitArrayManager.ToString(rebirth));
+        }
+    }
+}

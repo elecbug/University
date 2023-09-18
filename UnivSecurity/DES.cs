@@ -12,16 +12,53 @@ namespace UnivSecurity
     {
         public bool DebugMode { get; set; }
 
-        public static DES? Service = null;
-        
-        public static void CreateDES()
+        private BitArray input = new BitArray(64);
+        public BitArray Input 
         {
-            if (DES.Service is null)
+            get => this.input; 
+            set 
             {
-                DES.Service = new DES();
+                if (value.Length != 64)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this.input = value;
             }
         }
-        private DES()
+
+        private BitArray output = new BitArray(64);
+        public BitArray Output
+        {
+            get => this.output;
+            set
+            {
+                if (value.Length != 64)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                this.output = value;
+            }
+        }
+
+        private BitArray key = new BitArray(56);
+        public BitArray Key
+        {
+            get => this.key;
+            set
+            {
+                if (value.Length != 56)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                this.key = value;
+                GenerateKey();
+            }
+        }
+
+        private BitArray[] subkeys = new BitArray[16];
+        
+        public DES()
         {
 
         }
@@ -50,7 +87,7 @@ namespace UnivSecurity
             for (int i = 0; i < 16; i++)
             {
                 BitArray left_next = new BitArray(right);
-                BitArray f = FunctionF(right, this.key);
+                BitArray f = FunctionF(right, this.subkeys[i]);
                 BitArray right_next = left.Xor(f);
 
                 if (this.DebugMode)
@@ -125,7 +162,7 @@ namespace UnivSecurity
             for (int i = 0; i < 16; i++)
             {
                 BitArray left_next = new BitArray(right);
-                BitArray f = FunctionF(right, this.key);
+                BitArray f = FunctionF(right, this.subkeys[15 - i]);
                 BitArray right_next = left.Xor(f);
 
                 if (this.DebugMode)
@@ -175,7 +212,6 @@ namespace UnivSecurity
 
             this.output = result;
         }
-
 
         private BitArray FunctionF(BitArray input, BitArray key)
         {
@@ -283,45 +319,12 @@ namespace UnivSecurity
             return result;
         }
 
-        private BitArray input = new BitArray(64);
-        public BitArray Input 
+        private void GenerateKey()
         {
-            get => this.input; 
-            set 
+            for (int i = 0; i < 16; i++)
             {
-                if (value.Length != 64)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                this.input = value;
-            }
-        }
-
-        private BitArray output = new BitArray(64);
-        public BitArray Output
-        {
-            get => this.output;
-            set
-            {
-                if (value.Length != 64)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                this.output = value;
-            }
-        }
-
-        private BitArray key = new BitArray(56);
-        public BitArray Key
-        {
-            get => this.key;
-            set
-            {
-                if (value.Length != 48)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                this.key = value;
+                this.subkeys[i] = new BitArray(48, false);
+                this.subkeys[i][i] = true;
             }
         }
 
