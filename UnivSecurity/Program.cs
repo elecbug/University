@@ -6,7 +6,7 @@ namespace UnivSecurity
     {
         public static void Main(string[] args)
         {
-            List<BitArray> input = BitArrayManager.To64Bits(Console.ReadLine()!);
+            List<BitArray> input = DESSurporter.To64Bits(Console.ReadLine()!);
             List<DES> des1 = new List<DES>();
             List<BitArray> output = new List<BitArray>();
 
@@ -51,7 +51,7 @@ namespace UnivSecurity
                 Console.WriteLine();
             }
 
-            Console.WriteLine(BitArrayManager.ToString(rebirth));
+            Console.WriteLine(DESSurporter.ToString(rebirth));
         }
     }
 }

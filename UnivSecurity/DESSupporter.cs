@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace UnivSecurity
 {
-    public class BitArrayManager
+    public class DESSurporter
     {
         public static List<BitArray> To64Bits(string str)
         {
