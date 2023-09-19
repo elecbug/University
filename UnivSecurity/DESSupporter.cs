@@ -29,8 +29,9 @@ namespace UnivSecurity
 
             return result;
         }
-        public static List<BitArray> To64Bits(byte[] bytes)
+        public static List<BitArray> To64Bits(long ln)
         {
+            byte[] bytes = BitConverter.GetBytes(ln);
             List<byte> list = bytes.ToList();
 
             while (list.Count % 8 != 0)
@@ -60,7 +61,7 @@ namespace UnivSecurity
             return result;
         }
 
-        private static byte[] ToByteArray(BitArray bits)
+        public static byte[] ToByteArray(BitArray bits)
         {
             int num_bytes = bits.Count / 8;
             if (bits.Count % 8 != 0)
