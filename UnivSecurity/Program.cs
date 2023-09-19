@@ -6,11 +6,12 @@ namespace UnivSecurity
     {
         public static void Main(string[] args)
         {
-            switch (Console.ReadLine()!.ToUpper())
+            string command = Console.ReadLine()!;
+            switch (command.Split(' ')[1].ToUpper())
             {
-                case "E":
+                case "-E":
                     {
-                        string file = Console.ReadLine()!;
+                        string file = command.Split(' ')[0];
 
                         StreamReader reader = new StreamReader(file);
                         List<BitArray> input = DESSupporter.To64Bits(reader.ReadToEnd());
@@ -52,9 +53,9 @@ namespace UnivSecurity
                         ewriter.Close();
                     }
                     break;
-                case "D":
+                case "-D":
                     {
-                        string file = Console.ReadLine()!;
+                        string file = command.Split(' ')[0];
 
                         StreamReader ereader = new StreamReader(file);
                         List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
@@ -91,9 +92,10 @@ namespace UnivSecurity
                         }
 
                         StreamWriter rewriter = new StreamWriter("re-" + file);
-                        rewriter.Write(DESSupporter.ToString(rebirth).Substring(0, (int)size));
+                        string str = DESSupporter.ToString(rebirth).Substring(0, (int)size);
+                        rewriter.Write(str);
 
-                        Console.WriteLine(DESSupporter.ToString(rebirth).Substring(0, (int)size));
+                        Console.WriteLine(str);
 
                         ereader.Close();
                         rewriter.Close();
