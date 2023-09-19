@@ -48,6 +48,29 @@ namespace UnivSecurity
 
             return result;
         }
+        public static List<BitArray> To64Bits(BitArray bits)
+        {
+            int count = bits.Count / 64 + (bits.Count % 64 > 1 ? 1 : 0 );
+
+            List<BitArray> list = new List<BitArray>();
+
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(new BitArray(64));
+                
+                for (int j = 0; j < 64; j++)
+                {
+                    if (i * 64 + j >= bits.Count)
+                    {
+                        break;
+                    }
+
+                    list[i][j] = bits[i * 64 + j];
+                }
+            }
+
+            return list;
+        }
 
         public static string ToString(List<BitArray> bits)
         {
@@ -67,6 +90,22 @@ namespace UnivSecurity
 
         public static byte[] ToByteArray(BitArray bits)
         {
+            byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
+            bits.CopyTo(ret, 0);
+            return ret;
+        }
+        public static byte[] ToByteArray(List<BitArray> list)
+        {
+            BitArray bits = new BitArray(list.Count * 64);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    bits[i * 64 + j] = list[i][j];
+                }
+            }
+
             byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
             bits.CopyTo(ret, 0);
             return ret;

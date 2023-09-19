@@ -14,9 +14,15 @@ namespace UnivSecurity
                     {
                         string file = command.Split(' ')[0];
 
-                        StreamReader reader = new StreamReader(file, encoding: Encoding.Default);
-                        string text = reader.ReadToEnd();
-                        List<BitArray> input = DESSupporter.To64Bits(text);
+                        //StreamReader reader = new StreamReader(file, encoding: Encoding.Default);
+                        //string text = reader.ReadToEnd();
+                        //List<BitArray> input = DESSupporter.To64Bits(text);
+
+                        FileStream stream = File.OpenRead(file);
+                        BinaryReader reader = new BinaryReader(stream);
+
+                        byte[] bytes = reader.ReadBytes((int)stream.Length);
+                        List<BitArray> input = DESSupporter.To64Bits(new BitArray(bytes));
 
                         List<DES> des1 = new List<DES>();
                         List<BitArray> output = new List<BitArray>();
@@ -40,28 +46,37 @@ namespace UnivSecurity
                             //Console.WriteLine();
                         }
 
-                        StreamWriter ewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
-                        ewriter.Write(DESSupporter.ToString(output));
+                        //StreamWriter ewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
+                        //ewriter.Write(DESSupporter.ToString(output));
+
+                        BinaryWriter writer = new BinaryWriter(File.Create(command.Split(' ')[2]));
+                        writer.Write(DESSupporter.ToByteArray(output));
 
                         reader.Close();
-                        ewriter.Close();
+                        writer.Close();
                     }
                     break;
                 case "-D":
                     {
                         string file = command.Split(' ')[0];
 
-                        StreamReader ereader = new StreamReader(file, encoding: Encoding.Default);
-                        List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
+                        //StreamReader ereader = new StreamReader(file, encoding: Encoding.Default);
+                        //List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
+
+                        FileStream stream = File.OpenRead(file);
+                        BinaryReader reader = new BinaryReader(stream);
+
+                        byte[] bytes = reader.ReadBytes((int)stream.Length);
+                        List<BitArray> encryption = DESSupporter.To64Bits(new BitArray(bytes));
 
                         List<DES> des2 = new List<DES>();
                         List<BitArray> rebirth = new List<BitArray>();
 
-                        for (int i = 0; i < encrytion.Count; i++)
+                        for (int i = 0; i < encryption.Count; i++)
                         {
                             des2.Add(new DES()
                             {
-                                Input = encrytion[i],
+                                Input = encryption[i],
                                 Key = new BitArray(56, true),
                             });
 
@@ -76,14 +91,15 @@ namespace UnivSecurity
                             //Console.WriteLine();
                         }
 
-                        StreamWriter rewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
-                        string str = DESSupporter.ToString(rebirth);
-                        rewriter.Write(str);
+                        //StreamWriter rewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
+                        //string str = DESSupporter.ToString(rebirth);
+                        //rewriter.Write(str);
 
-                        Console.WriteLine(str);
+                        BinaryWriter writer = new BinaryWriter(File.Create(command.Split(' ')[2]));
+                        writer.Write(DESSupporter.ToByteArray(rebirth));
 
-                        ereader.Close();
-                        rewriter.Close();
+                        reader.Close();
+                        writer.Close();
                     }
                     break;
             }
