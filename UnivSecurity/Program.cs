@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Text;
 
 namespace UnivSecurity
 {
@@ -13,19 +14,12 @@ namespace UnivSecurity
                     {
                         string file = command.Split(' ')[0];
 
-                        StreamReader reader = new StreamReader(file);
-                        List<BitArray> input = DESSupporter.To64Bits(reader.ReadToEnd());
+                        StreamReader reader = new StreamReader(file, encoding: Encoding.Default);
+                        string text = reader.ReadToEnd();
+                        List<BitArray> input = DESSupporter.To64Bits(text);
 
                         List<DES> des1 = new List<DES>();
                         List<BitArray> output = new List<BitArray>();
-
-                        des1.Add(new DES()
-                        {
-                            Input = DESSupporter.To64Bits(reader.BaseStream.Length)[0],
-                            Key = new BitArray(56, true),
-                        });
-                        des1[0].Encrypt();
-                        output.Add(des1[0].Output);
 
                         for (int i = 0; i < input.Count; i++)
                         {
@@ -35,8 +29,8 @@ namespace UnivSecurity
                                 Key = new BitArray(56, true),
                             });
 
-                            des1[i + 1].Encrypt();
-                            output.Add(des1[i + 1].Output);
+                            des1[i].Encrypt();
+                            output.Add(des1[i].Output);
 
                             //Console.WriteLine("Cipher Text");
                             //for (int j = 0; j < 64; j++)
@@ -46,7 +40,7 @@ namespace UnivSecurity
                             //Console.WriteLine();
                         }
 
-                        StreamWriter ewriter = new StreamWriter("e-" + file);
+                        StreamWriter ewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
                         ewriter.Write(DESSupporter.ToString(output));
 
                         reader.Close();
@@ -57,22 +51,13 @@ namespace UnivSecurity
                     {
                         string file = command.Split(' ')[0];
 
-                        StreamReader ereader = new StreamReader(file);
+                        StreamReader ereader = new StreamReader(file, encoding: Encoding.Default);
                         List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
 
                         List<DES> des2 = new List<DES>();
                         List<BitArray> rebirth = new List<BitArray>();
 
-                        DES blocks = new DES()
-                        {
-                            Input = encrytion[0],
-                            Key = new BitArray(56, true),
-                        };
-                        blocks.Decrypt();
-
-                        long size = BitConverter.ToInt64(DESSupporter.ToByteArray(blocks.Output), 0);
-
-                        for (int i = 1; i < encrytion.Count; i++)
+                        for (int i = 0; i < encrytion.Count; i++)
                         {
                             des2.Add(new DES()
                             {
@@ -80,8 +65,8 @@ namespace UnivSecurity
                                 Key = new BitArray(56, true),
                             });
 
-                            des2[i - 1].Decrypt();
-                            rebirth.Add(des2[i - 1].Output);
+                            des2[i].Decrypt();
+                            rebirth.Add(des2[i].Output);
 
                             //Console.WriteLine("Rebirth Text: ");
                             //for (int j = 0; j < 64; j++)
@@ -91,8 +76,8 @@ namespace UnivSecurity
                             //Console.WriteLine();
                         }
 
-                        StreamWriter rewriter = new StreamWriter("re-" + file);
-                        string str = DESSupporter.ToString(rebirth).Substring(0, (int)size);
+                        StreamWriter rewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
+                        string str = DESSupporter.ToString(rebirth);
                         rewriter.Write(str);
 
                         Console.WriteLine(str);

@@ -12,7 +12,7 @@ namespace UnivSecurity
     {
         public static List<BitArray> To64Bits(string str)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(str);
+            byte[] bytes = Encoding.BigEndianUnicode.GetBytes(str);
             List<byte> list = bytes.ToList(); 
 
             while (list.Count % 8 != 0)
@@ -51,42 +51,25 @@ namespace UnivSecurity
 
         public static string ToString(List<BitArray> bits)
         {
-            string result = string.Empty;
+            BitArray sum = new BitArray(bits.Count * 64);
 
-            for (int i = 0; i <  bits.Count; i++) 
+            for (int i = 0; i < bits.Count; i++)
             {
-                result += Encoding.Unicode.GetString(ToByteArray(bits[i]));
+                for (int j = 0; j < 64; j++)
+                {
+                    sum[i * 64 + j] = bits[i][j];
+                }
             }
 
+            string result = Encoding.BigEndianUnicode.GetString(ToByteArray(sum));
             return result;
         }
 
         public static byte[] ToByteArray(BitArray bits)
         {
-            int num_bytes = bits.Count / 8;
-            if (bits.Count % 8 != 0)
-            {
-                num_bytes++;
-            }
-            byte[] bytes = new byte[num_bytes];
-            int byte_idx = 0, bit_idx = 8;
-
-            for (int i = 0; i < bits.Count; i++)
-            {
-                if (bits[i])
-                {
-                    bytes[byte_idx] |= (byte)(0b1000_0000 >> (bit_idx - 1));
-                }
-                bit_idx--;
-
-                if (bit_idx == 0)
-                {
-                    bit_idx = 8;
-                    byte_idx++;
-                }
-            }
-
-            return bytes;
+            byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
+            bits.CopyTo(ret, 0);
+            return ret;
         }
     }
 }
