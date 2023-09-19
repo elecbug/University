@@ -29,6 +29,24 @@ namespace UnivSecurity
 
             return result;
         }
+        public static List<BitArray> To64Bits(byte[] bytes)
+        {
+            List<byte> list = bytes.ToList();
+
+            while (list.Count % 8 != 0)
+            {
+                list.Add(0);
+            }
+
+            List<BitArray> result = new List<BitArray>();
+
+            for (int i = 0; i < bytes.Length / 8 + (bytes.Length % 8 > 0 ? 1 : 0); i++)
+            {
+                result.Add(new BitArray(list.GetRange(i * 8, 8).ToArray()));
+            }
+
+            return result;
+        }
 
         public static string ToString(List<BitArray> bits)
         {

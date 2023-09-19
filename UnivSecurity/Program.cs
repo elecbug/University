@@ -6,7 +6,12 @@ namespace UnivSecurity
     {
         public static void Main(string[] args)
         {
-            List<BitArray> input = DESSupporter.To64Bits(Console.ReadLine()!);
+            string file = Console.ReadLine()!;
+
+            StreamReader reader = new StreamReader(file);
+            List<BitArray> input = DESSupporter.To64Bits(reader.ReadToEnd());
+            reader.Close();
+
             List<DES> des1 = new List<DES>();
             List<BitArray> output = new List<BitArray>();
 
@@ -29,6 +34,10 @@ namespace UnivSecurity
                 Console.WriteLine();
             }
 
+            StreamWriter ewriter = new StreamWriter("e-" + file);
+            ewriter.Write(DESSupporter.ToString(output));
+            ewriter.Close();
+
             List<DES> des2 = new List<DES>();
             List<BitArray> rebirth = new List<BitArray>();
 
@@ -50,6 +59,10 @@ namespace UnivSecurity
                 }
                 Console.WriteLine();
             }
+
+            StreamWriter rewriter = new StreamWriter("re-" + file);
+            rewriter.Write(DESSupporter.ToString(rebirth));
+            rewriter.Close();
 
             Console.WriteLine(DESSupporter.ToString(rebirth));
         }
