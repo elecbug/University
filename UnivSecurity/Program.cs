@@ -7,12 +7,15 @@ namespace UnivSecurity
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("How to Use:\n[Input file] -e|-d [Output file] [Hexa-key]");
+
             string command = Console.ReadLine()!;
             switch (command.Split(' ')[1].ToUpper())
             {
                 case "-E":
                     {
                         string file = command.Split(' ')[0];
+                        BitArray key = new BitArray(DESSupporter.HexToByte(command.Split(' ')[3]));
 
                         //StreamReader reader = new StreamReader(file, encoding: Encoding.Default);
                         //string text = reader.ReadToEnd();
@@ -32,7 +35,7 @@ namespace UnivSecurity
                             des1.Add(new DES()
                             {
                                 Input = input[i],
-                                Key = new BitArray(56, true),
+                                Key = key,
                             });
 
                             des1[i].Encrypt();
@@ -49,6 +52,15 @@ namespace UnivSecurity
                         //StreamWriter ewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
                         //ewriter.Write(DESSupporter.ToString(output));
 
+                        //for (int i = 0; i < des1.Count; i++)
+                        //{
+                        //    for (int j = 0; j < 64; j++)
+                        //    {
+                        //        Console.Write(des1[i].Output[j] ? "1 " : "0 ");
+                        //    }
+                        //    Console.WriteLine();
+                        //}
+
                         BinaryWriter writer = new BinaryWriter(File.Create(command.Split(' ')[2]));
                         writer.Write(DESSupporter.ToByteArray(output));
 
@@ -59,7 +71,8 @@ namespace UnivSecurity
                 case "-D":
                     {
                         string file = command.Split(' ')[0];
-
+                        BitArray key = new BitArray(DESSupporter.HexToByte(command.Split(' ')[3]));
+                        
                         //StreamReader ereader = new StreamReader(file, encoding: Encoding.Default);
                         //List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
 
@@ -77,7 +90,7 @@ namespace UnivSecurity
                             des2.Add(new DES()
                             {
                                 Input = encryption[i],
-                                Key = new BitArray(56, true),
+                                Key = key,
                             });
 
                             des2[i].Decrypt();

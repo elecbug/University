@@ -110,5 +110,18 @@ namespace UnivSecurity
             bits.CopyTo(ret, 0);
             return ret;
         }
+
+        public static byte[] HexToByte(string hex)
+        {
+            byte[] convert = new byte[hex.Length / 2];
+
+            int length = convert.Length;
+            for (int i = 0; i < length; i++)
+            {
+                convert[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            }
+
+            return convert;
+        }
     }
 }

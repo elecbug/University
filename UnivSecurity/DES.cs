@@ -40,18 +40,20 @@ namespace UnivSecurity
             }
         }
 
-        private BitArray key = new BitArray(56);
+        private BitArray key = new BitArray(64);
         public BitArray Key
         {
             get => this.key;
             set
             {
-                if (value.Length != 56)
+                if (value.Length != 64)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
 
                 this.key = value;
+
+                CheckKeyError();
                 GenerateKey();
             }
         }
@@ -78,9 +80,6 @@ namespace UnivSecurity
             for (int i = 0; i < 32; i++)
             {
                 left[i] = ip[i];
-            }
-            for (int i = 0; i < 32; i++)
-            {
                 right[i] = ip[i + 32];
             }
 
@@ -122,9 +121,6 @@ namespace UnivSecurity
             for (int i = 0; i < 32; i++)
             {
                 last[i] = right[i];
-            }
-            for (int i = 0; i < 32; i++)
-            {
                 last[i + 32] = left[i];
             }
 
@@ -153,9 +149,6 @@ namespace UnivSecurity
             for (int i = 0; i < 32; i++)
             {
                 left[i] = ip[i];
-            }
-            for (int i = 0; i < 32; i++)
-            {
                 right[i] = ip[i + 32];
             }
 
@@ -197,9 +190,6 @@ namespace UnivSecurity
             for (int i = 0; i < 32; i++)
             {
                 last[i] = right[i];
-            }
-            for (int i = 0; i < 32; i++)
-            {
                 last[i + 32] = left[i];
             }
 
@@ -321,11 +311,75 @@ namespace UnivSecurity
 
         private void GenerateKey()
         {
-            for (int i = 0; i < 16; i++)
+            BitArray bit56 = new BitArray(56);
+
+            for (int i = 0; i < 56; i++)
             {
-                this.subkeys[i] = new BitArray(48, false);
-                this.subkeys[i][i] = true;
+                bit56[i] = this.key[Table.PC1Table[i]];
             }
+
+            BitArray c = new BitArray(28);
+            BitArray d = new BitArray(28);
+
+            for (int i = 0; i < 28; i++)
+            {
+                c[i] = bit56[i];
+                d[i] = bit56[i + 28];
+            }
+
+            for (int i = 1; i <= 16; i++)
+            {
+                this.subkeys[i - 1] = new BitArray(48);
+
+                c = KeyShift(c, i == 1 || i == 2 || i == 9 || i == 16 ? 1 : 2);
+                d = KeyShift(d, i == 1 || i == 2 || i == 9 || i == 16 ? 1 : 2);
+
+                BitArray cd = new BitArray(56);
+                
+                for (int ii = 0; ii < 28; ii++)
+                {
+                    cd[ii] = c[ii];
+                    cd[ii + 28] = d[ii];
+                }
+
+                for (int ii = 0; ii < 48; ii++)
+                {
+                    this.subkeys[i - 1][ii] = cd[Table.PC2Table[ii]];
+                }
+            }
+        }
+
+        private void CheckKeyError()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                int sum = 0;
+                for (int j = 0; j < 8; j++)
+                {
+                    sum += (this.key[i * 8 + j] ? 1 : 0);
+                }
+                if (sum % 2 == 0)
+                {
+                    throw new Exception("Key is not saved");
+                }
+            }
+        }
+
+        private BitArray KeyShift(BitArray bits, int i)
+        {
+            if (bits.Length != 28)
+            {
+                throw new ArgumentOutOfRangeException("Key shfit");
+            }
+
+            BitArray result = new BitArray(28);
+
+            for (int idx = 0; idx<28; idx++)
+            {
+                result[(idx - i + 28) % 28] = bits[idx];
+            }
+
+            return result;
         }
 
         private class Table
@@ -437,6 +491,29 @@ namespace UnivSecurity
                 31, 0, 1, 2, 3, 4, 3, 4, 5, 6, 7, 8, 7, 8, 9, 10,
                 11, 12, 11, 12, 13, 14, 15, 16, 15, 16, 17, 18, 19, 20, 19, 20,
                 21, 22, 23, 24, 23, 24, 25, 26, 27, 28, 27, 28, 29, 30, 31, 0
+            };
+
+            public static readonly byte[] PC1Table = new byte[]
+            {
+                56, 48, 40, 32, 24, 16, 8, 0,
+                57, 49, 41, 33, 25, 17, 9, 1,
+                58, 50, 42, 34, 26, 18, 10, 2,
+                59, 51, 43, 35, 62, 54, 46, 38,
+                30, 22, 14, 6, 61, 53, 45, 37,
+                29, 21, 13, 5, 60, 52, 44, 36,
+                28, 20, 12, 4, 27, 19, 11, 3
+            };
+
+            public static readonly byte[] PC2Table = new byte[]
+            {
+                13, 16, 10, 23, 0, 4,
+                2, 27, 14, 5, 20, 9,
+                22, 18, 11, 3, 25, 7,
+                15, 6, 26, 19, 12, 1,
+                40, 51, 30, 36, 46, 54,
+                29, 39, 50, 44, 32, 47,
+                43, 48, 38, 55, 33, 52,
+                45, 41, 49, 35, 28, 31
             };
         }
     }
