@@ -1,0 +1,1 @@
+Scaffold-DbContext "server=localhost;database=univDB;uid=root;pwd=1479" MySql.EntityFrameworkCore -OutputDir univDB -f
