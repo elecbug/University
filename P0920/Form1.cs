@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using P0920.univDB;
 using System.Diagnostics;
 
@@ -53,7 +54,7 @@ namespace P0920
                 stu.Age = int.Parse(textBox1.Text);
 
                 /// stu and item are not bindied now.
-                item.Age = int.Parse((string)textBox1.Text);
+                item.Age = int.Parse(textBox1.Text);
                 context.SaveChanges();
             }
         }
