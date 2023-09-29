@@ -8,11 +8,19 @@ using System.Threading.Tasks;
 
 namespace UnivSecurity
 {
+    /// <summary>
+    /// DES 메인 Protocol
+    /// </summary>
     public class DES
     {
+        /// <summary>
+        /// Debug mode(활성화 시 화면에 비트 상태를 함께 출력)
+        /// </summary>
         public bool DebugMode { get; set; }
 
-        private BitArray input = new BitArray(64);
+        /// <summary>
+        /// 64 bit input BitArray, 함수를 호출하여 암-복호화 가능
+        /// </summary>
         public BitArray Input 
         {
             get => this.input; 
@@ -25,8 +33,11 @@ namespace UnivSecurity
                 this.input = value;
             }
         }
+        private BitArray input = new BitArray(64);
 
-        private BitArray output = new BitArray(64);
+        /// <summary>
+        /// Input을 함수 호출한 후, 암-복호화 결과가 저장
+        /// </summary>
         public BitArray Output
         {
             get => this.output;
@@ -39,8 +50,11 @@ namespace UnivSecurity
                 this.output = value;
             }
         }
+        private BitArray output = new BitArray(64);
 
-        private BitArray key = new BitArray(64);
+        /// <summary>
+        /// 암-복호화에 사용되는 키
+        /// </summary>
         public BitArray Key
         {
             get => this.key;
@@ -57,16 +71,27 @@ namespace UnivSecurity
                 GenerateKey();
             }
         }
+        private BitArray key = new BitArray(64);
 
+        /// <summary>
+        /// 내부적으로 사용되는 보조키, 키를 할당할 때 자동으로 생성
+        /// </summary>
         private BitArray[] subkeys = new BitArray[16];
         
+        /// <summary>
+        /// 생성자 (옵션 없음)
+        /// </summary>
         public DES()
         {
 
         }
 
+        /// <summary>
+        /// Input을 Key로 암호화하여 Output에 저장
+        /// </summary>
         public void Encrypt()
         {
+            // IP 테이블로 Confusion
             BitArray ip = new BitArray(64);
 
             for (int i = 0; i < 64; i++)
@@ -74,6 +99,7 @@ namespace UnivSecurity
                 ip[i] = this.input[Table.InitialPermutation[i] - 1];
             }
 
+            // 연산을 위해 좌우 분할
             BitArray left = new BitArray(32);
             BitArray right = new BitArray(32);
 
@@ -83,6 +109,7 @@ namespace UnivSecurity
                 right[i] = ip[i + 32];
             }
 
+            // 16번 Round
             for (int i = 0; i < 16; i++)
             {
                 BitArray left_next = new BitArray(right);
@@ -118,6 +145,7 @@ namespace UnivSecurity
 
             BitArray last = new BitArray(64);
 
+            // 분할한 좌우를 병합
             for (int i = 0; i < 32; i++)
             {
                 last[i] = right[i];
@@ -126,16 +154,19 @@ namespace UnivSecurity
 
             BitArray result = new BitArray(64);
 
+            // 마지막 IP-1로 Confusion
             for (int i = 0; i < 64; i++)
             {
                 result[i] = last[Table.InverseInitialPermutation[i] - 1];
             }
 
+            // 반환용 변수에 저장
             this.output = result;
         }
 
         public void Decrypt()
         {
+            // IP 테이블로 Confusion
             BitArray ip = new BitArray(64);
 
             for (int i = 0; i < 64; i++)
@@ -143,6 +174,7 @@ namespace UnivSecurity
                 ip[i] = this.input[Table.InitialPermutation[i] - 1];
             }
 
+            // 연산을 위해 좌우 분할
             BitArray left = new BitArray(32);
             BitArray right = new BitArray(32);
 
@@ -152,6 +184,7 @@ namespace UnivSecurity
                 right[i] = ip[i + 32];
             }
 
+            // 16번 Round (키는 역순 사용)
             for (int i = 0; i < 16; i++)
             {
                 BitArray left_next = new BitArray(right);
@@ -185,6 +218,7 @@ namespace UnivSecurity
                 right = right_next;
             }
 
+            // 분할한 좌우를 병합
             BitArray last = new BitArray(64);
 
             for (int i = 0; i < 32; i++)
@@ -193,6 +227,7 @@ namespace UnivSecurity
                 last[i + 32] = left[i];
             }
 
+            // 마지막 IP-1로 Confusion
             BitArray result = new BitArray(64);
 
             for (int i = 0; i < 64; i++)
@@ -200,16 +235,25 @@ namespace UnivSecurity
                 result[i] = last[Table.InverseInitialPermutation[i] - 1];
             }
 
+            // 반환용 변수에 저장
             this.output = result;
         }
 
+        /// <summary>
+        /// F 함수의 역할을 하는 메서드
+        /// </summary>
+        /// <param name="input"> input 값과 key 값을 통해 연산 수행 </param>
+        /// <param name="key"> 사용되는 보조키 </param>
+        /// <returns> 연산 결과 </returns>
         private BitArray FunctionF(BitArray input, BitArray key)
         {
+            // 길이 검살
             if (input.Length != 32 || key.Length != 48)
             {
                 throw new ArgumentException("Input array's length is not 32 or Key array's length is not 48");
             }
 
+            // 먼저 테이블로 expansion
             BitArray expansion = new BitArray(48);
 
             for (int i = 0; i < 48; i++)
@@ -226,8 +270,10 @@ namespace UnivSecurity
                 Console.WriteLine();
             }
 
+            // 키로 xor 수행
             expansion = expansion.Xor(key);
 
+            // 8개의 블럭 생성 후 6 bitTlr gkfekd
             List<BitArray> blocks = new List<BitArray>(new BitArray[8]);
 
             if (this.DebugMode)
@@ -267,8 +313,10 @@ namespace UnivSecurity
                 Console.WriteLine();
             }
 
+            // 반환하는 32 bit 변수
             BitArray result = new BitArray(32);
 
+            // Perutation 테이블을 통해 블럭을 병합
             for (int i = 0; i < 32; i++)
             {
                 result[Table.PermutationTable[i]] = blocks[i / 4][i % 4];
@@ -286,13 +334,21 @@ namespace UnivSecurity
             return result;
         }
 
+        /// <summary>
+        /// S-box의 역할을 하는 메서드
+        /// </summary>
+        /// <param name="input"> 입력 값 6 bit </param>
+        /// <param name="box_num"> S-box Number, 0~7로 사용 </param>
+        /// <returns> 4 bit 반환 값 </returns>
         private BitArray SBoxes(BitArray input, int box_num)
         {
+            // 입력 길이 검사
             if (input.Length != 6)
             {
                 throw new ArgumentException("Input array's length is not 6");
             }
 
+            // bit 단위 연산으로 row와 column에 사용되는 부분을 나누어 사용
             int row 
                 = (input[0] ? 1 : 0) * 0b10 + (input[5] ? 1 : 0) * 0b01;
             int column
@@ -301,6 +357,7 @@ namespace UnivSecurity
 
             BitArray result = new BitArray(4);
 
+            // 반환 값 생성
             for (int i = 0; i < 4; i++)
             {
                 result[i] = (Table.SBoxes[box_num][row, column] & (0b1000 >> i)) != 0;
@@ -309,15 +366,20 @@ namespace UnivSecurity
             return result;
         }
 
+        /// <summary>
+        /// 키 생성 메서드, 키 할당 시 자동으로 호출
+        /// </summary>
         private void GenerateKey()
         {
             BitArray bit56 = new BitArray(56);
 
+            // PC1 테이블로 Confusion
             for (int i = 0; i < 56; i++)
             {
                 bit56[i] = this.key[Table.PC1Table[i]];
             }
 
+            // 좌우 분할
             BitArray c = new BitArray(28);
             BitArray d = new BitArray(28);
 
@@ -327,6 +389,7 @@ namespace UnivSecurity
                 d[i] = bit56[i + 28];
             }
 
+            // 조건에 맞게 Shift하여 16개의 키를 미리 생성하여 저장해둚
             for (int i = 1; i <= 16; i++)
             {
                 this.subkeys[i - 1] = new BitArray(48);
@@ -349,6 +412,9 @@ namespace UnivSecurity
             }
         }
 
+        /// <summary>
+        /// 키가 올바른지 패리티 체크하는 메서드
+        /// </summary>
         private void CheckKeyError()
         {
             for (int i = 0; i < 8; i++)
@@ -365,8 +431,15 @@ namespace UnivSecurity
             }
         }
 
+        /// <summary>
+        /// 키를 Circular Shift하는 메서드
+        /// </summary>
+        /// <param name="bits"> 입력 bits </param>
+        /// <param name="i"> Shift 횟수 </param>
+        /// <returns></returns>
         private BitArray KeyShift(BitArray bits, int i)
         {
+            // 입력 길이 검사
             if (bits.Length != 28)
             {
                 throw new ArgumentOutOfRangeException("Key shfit");
@@ -374,7 +447,8 @@ namespace UnivSecurity
 
             BitArray result = new BitArray(28);
 
-            for (int idx = 0; idx<28; idx++)
+            // Circular Shift Algorithm
+            for (int idx = 0; idx < 28; idx++)
             {
                 result[(idx - i + 28) % 28] = bits[idx];
             }
@@ -382,6 +456,9 @@ namespace UnivSecurity
             return result;
         }
 
+        /// <summary>
+        /// 테이블 목록 클래스
+        /// </summary>
         private class Table
         {
             public static readonly byte[] InitialPermutation =

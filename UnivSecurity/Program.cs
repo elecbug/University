@@ -12,24 +12,26 @@ namespace UnivSecurity
             string command = Console.ReadLine()!;
             switch (command.Split(' ')[1].ToUpper())
             {
+                // 암호화 모드
                 case "-E":
                     {
+                        // 커맨드를 사용하기 좋게 나눔
                         string file = command.Split(' ')[0];
                         BitArray key = new BitArray(DESSupporter.HexToByte(command.Split(' ')[3]));
 
-                        //StreamReader reader = new StreamReader(file, encoding: Encoding.Default);
-                        //string text = reader.ReadToEnd();
-                        //List<BitArray> input = DESSupporter.To64Bits(text);
-
+                        // 파일을 바이너리로 읽음
                         FileStream stream = File.OpenRead(file);
                         BinaryReader reader = new BinaryReader(stream);
 
+                        // 8 bit(1 B) 씩나누고, 8 B (64 bit) 단위로 합쳐 64 bit 리스트를 형성
                         byte[] bytes = reader.ReadBytes((int)stream.Length);
                         List<BitArray> input = DESSupporter.To64Bits(new BitArray(bytes));
 
+                        // des 리스트를 만들고 암호화 output 리스트도 만듦
                         List<DES> des1 = new List<DES>();
                         List<BitArray> output = new List<BitArray>();
 
+                        // 각 리스트의 원소에 input 64 bit와 키를 넣고 암호화 후 output 리스트에 결과를 추가
                         for (int i = 0; i < input.Count; i++)
                         {
                             des1.Add(new DES()
@@ -40,27 +42,9 @@ namespace UnivSecurity
 
                             des1[i].Encrypt();
                             output.Add(des1[i].Output);
-
-                            //Console.WriteLine("Cipher Text");
-                            //for (int j = 0; j < 64; j++)
-                            //{
-                            //    Console.Write(output[i][j] ? "1 " : "0 ");
-                            //}
-                            //Console.WriteLine();
                         }
 
-                        //StreamWriter ewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
-                        //ewriter.Write(DESSupporter.ToString(output));
-
-                        //for (int i = 0; i < des1.Count; i++)
-                        //{
-                        //    for (int j = 0; j < 64; j++)
-                        //    {
-                        //        Console.Write(des1[i].Output[j] ? "1 " : "0 ");
-                        //    }
-                        //    Console.WriteLine();
-                        //}
-
+                        // 모두 합쳐서 최종 파일로 생성
                         BinaryWriter writer = new BinaryWriter(File.Create(command.Split(' ')[2]));
                         writer.Write(DESSupporter.ToByteArray(output));
 
@@ -68,23 +52,26 @@ namespace UnivSecurity
                         writer.Close();
                     }
                     break;
+                    // 복호화 모드
                 case "-D":
                     {
+                        // 커맨드를 사용하기 좋게 나눔
                         string file = command.Split(' ')[0];
                         BitArray key = new BitArray(DESSupporter.HexToByte(command.Split(' ')[3]));
-                        
-                        //StreamReader ereader = new StreamReader(file, encoding: Encoding.Default);
-                        //List<BitArray> encrytion = DESSupporter.To64Bits(ereader.ReadToEnd());
 
+                        // 파일을 바이너리로 읽음
                         FileStream stream = File.OpenRead(file);
                         BinaryReader reader = new BinaryReader(stream);
 
+                        // 8 bit(1 B) 씩나누고, 8 B (64 bit) 단위로 합쳐 64 bit 리스트를 형성
                         byte[] bytes = reader.ReadBytes((int)stream.Length);
                         List<BitArray> encryption = DESSupporter.To64Bits(new BitArray(bytes));
 
+                        // des 리스트를 만들고 복호화 output 리스트도 만듦
                         List<DES> des2 = new List<DES>();
                         List<BitArray> rebirth = new List<BitArray>();
 
+                        // 각 리스트의 원소에 암호화된 input 64 bit와 키를 넣고 복호화 후 output 리스트에 결과를 추가
                         for (int i = 0; i < encryption.Count; i++)
                         {
                             des2.Add(new DES()
@@ -95,19 +82,9 @@ namespace UnivSecurity
 
                             des2[i].Decrypt();
                             rebirth.Add(des2[i].Output);
-
-                            //Console.WriteLine("Rebirth Text: ");
-                            //for (int j = 0; j < 64; j++)
-                            //{
-                            //    Console.Write(rebirth[i][j] ? "1 " : "0 ");
-                            //}
-                            //Console.WriteLine();
                         }
 
-                        //StreamWriter rewriter = new StreamWriter(command.Split(' ')[2], append: false, encoding: Encoding.Default);
-                        //string str = DESSupporter.ToString(rebirth);
-                        //rewriter.Write(str);
-
+                        // 모두 합쳐서 최종 파일로 생성
                         BinaryWriter writer = new BinaryWriter(File.Create(command.Split(' ')[2]));
                         writer.Write(DESSupporter.ToByteArray(rebirth));
 
