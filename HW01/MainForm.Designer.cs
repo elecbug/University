@@ -80,7 +80,7 @@
             subjectComboBox.TabIndex = 4;
             subjectComboBox.Text = "Will add subject";
             subjectComboBox.SelectedIndexChanged += SubjectToolBoxTextChanged;
-            subjectComboBox.Click += SubjectToolBoxClick;
+            subjectComboBox.Click += SubjectComboBoxClick;
             // 
             // MainForm
             // 

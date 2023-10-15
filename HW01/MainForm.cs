@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using HW01.univDB;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace HW01
 {
@@ -47,17 +48,23 @@ namespace HW01
                 foreach (Class item in list)
                 {
                     this.subjectListBox.Items.Add(item.Subject);
-                    // var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
-                    // this.subject.Items.Add(subject.Name);
                 }
             }
         }
 
         private void SubjectToolBoxTextChanged(object sender, EventArgs e)
         {
-            if (MessageBox.Show("You want to add this subject?", "Check", MessageBoxButtons.OKCancel)
-                == DialogResult.OK)
+            SubForm form = new SubForm();
+
+            string grade = "N";
+            int ms = 0, fs = 0;
+
+            if (form.ShowDialog() == DialogResult.OK)
             {
+                grade = form.Grade;
+                ms = form.MiddleScore;
+                fs = form.FinalScore;
+
                 try
                 {
                     using (UnivDbContext db = new UnivDbContext())
@@ -66,9 +73,9 @@ namespace HW01
                         {
                             SubjectId = (this.subjectComboBox.SelectedItem as Subject)!.Id,
                             StudentId = (this.nameListBox.SelectedItem as Student)!.Id,
-                            Grade = "N",
-                            MidScore = 0,
-                            FinalScore = 0,
+                            Grade = grade,
+                            MidScore = ms,
+                            FinalScore = fs,
                             Joined = DateTime.Now,
                         };
 
@@ -85,7 +92,7 @@ namespace HW01
             }
         }
 
-        private void SubjectToolBoxClick(object sender, EventArgs e)
+        private void SubjectComboBoxClick(object sender, EventArgs e)
         {
             using (UnivDbContext db = new UnivDbContext())
             {
@@ -95,36 +102,82 @@ namespace HW01
 
                 foreach (Subject item in list)
                 {
+                    if (db.Classes
+                        .Where(x => x.StudentId == (this.nameListBox.SelectedItem as Student)!.Id
+                        && x.SubjectId == item.Id).ToList().Count > 0)
+                    {
+                        continue;
+                    }
+
                     this.subjectComboBox.Items.Add(item);
-                    // var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
-                    // this.subject.Items.Add(subject.Name);
                 }
             }
         }
 
         private void SubjectListBoxMouseClick(object sender, EventArgs e)
         {
-            if (MessageBox.Show("You want to delete this subject?", "Check", MessageBoxButtons.OKCancel)
-                == DialogResult.OK)
+            ContextMenuStrip menuStrip = new ContextMenuStrip();
+
+            menuStrip.Items.Add("Edit").Click += (s, e)=>
             {
                 try
                 {
                     using (UnivDbContext db = new UnivDbContext())
                     {
-                        Class item = db.Classes.Where(x => x.SubjectId == (this.subjectListBox.SelectedItem as Subject)!.Id
-                            && x.StudentId == (this.nameListBox.SelectedItem as Student)!.Id).ToList()[0];
-                        db.Classes.Remove(item);
+                        var list = db.Classes.Include(p => p.Subject)
+                            .Where(p => p.StudentId == (this.nameListBox.SelectedItem as Student)!.Id
+                                && p.SubjectId == (this.subjectListBox.SelectedItem as Subject)!.Id).ToList();
 
-                        db.SaveChanges();
+                        SubForm form = new SubForm()
+                        {
+                            Grade = list[0].Grade!,
+                            MiddleScore = (int)list[0].MidScore!,
+                            FinalScore = (int)list[0].FinalScore!
+                        };
 
-                        SubjectListRefresh();
+                        if (form.ShowDialog() == DialogResult.OK)
+                        {
+                            list[0].Grade = form.Grade;
+                            list[0].MidScore = form.MiddleScore;
+                            list[0].FinalScore = form.FinalScore;
+
+                            db.SaveChanges();
+
+                            SubjectListRefresh();
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
                 }
-            }
+            };
+            menuStrip.Items.Add("Delete").Click += (s, e) =>
+            {
+                if (MessageBox.Show("You want to delete this subject?", "Check", MessageBoxButtons.OKCancel)
+                    == DialogResult.OK)
+                {
+                    try
+                    {
+                        using (UnivDbContext db = new UnivDbContext())
+                        {
+                            Class item = db.Classes.Where(x => x.SubjectId == (this.subjectListBox.SelectedItem as Subject)!.Id
+                                && x.StudentId == (this.nameListBox.SelectedItem as Student)!.Id).ToList()[0];
+                            db.Classes.Remove(item);
+
+                            db.SaveChanges();
+
+                            SubjectListRefresh();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                    }
+                }
+            };
+
+            menuStrip.Show(Control.MousePosition);
         }
     }
 }
