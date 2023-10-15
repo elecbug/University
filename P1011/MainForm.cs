@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using P0925.univDB;
 using System.Diagnostics;
 
@@ -57,13 +58,13 @@ namespace P1011
                 this.subject.Items.Clear();
 
                 Student student = (this.name.SelectedItem as Student)!;
-                var list = db.Classes.Where(p => p.StudentId == student.Id).ToList();
+                var list = db.Classes.Include(p => p.Subject).Where(p => p.StudentId == student.Id).ToList();
 
                 foreach (Class item in list)
                 {
-                    // this.subject.Items.Add(item.Subject.Name);
-                    var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
-                    this.subject.Items.Add(subject.Name);
+                    this.subject.Items.Add(item.Subject.Name);
+                    // var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
+                    // this.subject.Items.Add(subject.Name);
                 }
             }
         }
