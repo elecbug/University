@@ -10,6 +10,7 @@ namespace HW01
         {
             InitializeComponent();
 
+            this.subjectListBox.DisplayMember = "Name";
             this.nameListBox.DisplayMember = "Name";
             this.subjectComboBox.DisplayMember = "Name";
         }
@@ -45,7 +46,7 @@ namespace HW01
 
                 foreach (Class item in list)
                 {
-                    this.subjectListBox.Items.Add(item.Subject.Name);
+                    this.subjectListBox.Items.Add(item.Subject);
                     // var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
                     // this.subject.Items.Add(subject.Name);
                 }
@@ -97,6 +98,31 @@ namespace HW01
                     this.subjectComboBox.Items.Add(item);
                     // var subject = db.Subjects.Where(p => p.Id == item.SubjectId).First();
                     // this.subject.Items.Add(subject.Name);
+                }
+            }
+        }
+
+        private void SubjectListBoxMouseClick(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("You want to delete this subject?", "Check", MessageBoxButtons.OKCancel)
+                == DialogResult.OK)
+            {
+                try
+                {
+                    using (UnivDbContext db = new UnivDbContext())
+                    {
+                        Class item = db.Classes.Where(x => x.SubjectId == (this.subjectListBox.SelectedItem as Subject)!.Id
+                            && x.StudentId == (this.nameListBox.SelectedItem as Student)!.Id).ToList()[0];
+                        db.Classes.Remove(item);
+
+                        db.SaveChanges();
+
+                        SubjectListRefresh();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
                 }
             }
         }

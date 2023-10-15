@@ -70,6 +70,7 @@
             subjectListBox.Name = "subjectListBox";
             subjectListBox.Size = new Size(256, 384);
             subjectListBox.TabIndex = 3;
+            subjectListBox.SelectedValueChanged += SubjectListBoxMouseClick;
             // 
             // subjectComboBox
             // 
