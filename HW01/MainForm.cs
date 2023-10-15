@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using P0925.univDB;
+using HW01.univDB;
 using System.Diagnostics;
 
 namespace HW01

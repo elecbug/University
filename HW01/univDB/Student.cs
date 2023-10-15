@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace P0925.univDB;
+namespace HW01.univDB;
 
 public partial class Student
 {

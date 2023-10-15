@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace P0925.univDB;
+namespace HW01.univDB;
 
 public partial class UnivDbContext : DbContext
 {
