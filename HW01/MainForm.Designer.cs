@@ -33,6 +33,9 @@
             nameListBox = new ListBox();
             subjectListBox = new ListBox();
             subjectComboBox = new ComboBox();
+            button1 = new Button();
+            button2 = new Button();
+            button3 = new Button();
             SuspendLayout();
             // 
             // text
@@ -82,11 +85,44 @@
             subjectComboBox.SelectedIndexChanged += SubjectToolBoxTextChanged;
             subjectComboBox.Click += SubjectComboBoxClick;
             // 
+            // button1
+            // 
+            button1.Location = new Point(536, 45);
+            button1.Name = "button1";
+            button1.Size = new Size(252, 29);
+            button1.TabIndex = 5;
+            button1.Text = "Add Student";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += AddClick;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(536, 80);
+            button2.Name = "button2";
+            button2.Size = new Size(252, 29);
+            button2.TabIndex = 5;
+            button2.Text = "Remove Student";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += RemoveClick;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(536, 115);
+            button3.Name = "button3";
+            button3.Size = new Size(252, 29);
+            button3.TabIndex = 5;
+            button3.Text = "Edit Student";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += EditClick;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button3);
+            Controls.Add(button2);
+            Controls.Add(button1);
             Controls.Add(subjectComboBox);
             Controls.Add(subjectListBox);
             Controls.Add(nameListBox);
@@ -104,5 +140,8 @@
         private ListBox nameListBox;
         private ListBox subjectListBox;
         private ComboBox subjectComboBox;
+        private Button button1;
+        private Button button2;
+        private Button button3;
     }
 }
