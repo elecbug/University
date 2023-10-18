@@ -1,4 +1,4 @@
-﻿namespace P1004
+﻿namespace P0927
 {
     partial class MainForm
     {
