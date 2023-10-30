@@ -76,19 +76,76 @@ namespace P1030
                 Text = "Is done",
             };
 
-            RefreshList();
-
-            this.TodoList.DisplayMember = "Id";
-            this.DetailList.DisplayMember = "Id";
+            this.TodoList.Format += (s, e) =>
+            {
+                e.Value = (e.ListItem as Todo)!.Id.ToString("yyyy-MM-dd") 
+                    + " " + (e.ListItem as Todo)!.Name;
+            };
+            this.DetailList.Format += (s, e) =>
+            {
+                e.Value = (e.ListItem as TodoDetail)!.Id.ToString("HH:mm:ss");
+            };
 
             this.DetailList.SelectedIndexChanged += DetailListSelectedIndexChanged;
+            this.Add.Click += AddClick;
+
+            RefreshList();
+        }
+
+        private void AddClick(object? sender, EventArgs e)
+        {
+            using (TododbContext db = new TododbContext())
+            {
+                var date = this.TimePicker.Value;
+
+                if (db.Todos.Where(p=>p.Id == date).ToList().Count > 0)
+                {
+                    var item = new TodoDetail()
+                    {
+                        Id = date,
+                        TodoId = date,
+                        Descrip = this.DescripBox.Text,
+                        IsDone = this.IsDone.Checked,
+                    };
+
+                    db.TodoDetails.Add(item);
+                    db.SaveChanges();
+                    RefreshList();
+                }
+                else
+                {
+                    var todo = new Todo()
+                    {
+                        Id = date,
+                        Name = this.NameBox.Text,
+                    };
+                    var item = new TodoDetail()
+                    {
+                        Id = date,
+                        TodoId = date,
+                        Descrip = this.DescripBox.Text,
+                        IsDone = this.IsDone.Checked,
+                    };
+
+                    db.Todos.Add(todo);
+                    db.TodoDetails.Add(item);
+                    db.SaveChanges();
+                    RefreshList();
+
+                }
+            }
         }
 
         private void DetailListSelectedIndexChanged(object? sender, EventArgs e)
         {
             using (TododbContext db = new TododbContext())
             {
-
+                this.TimePicker.Value = (this.DetailList.SelectedItem as TodoDetail)!.Id;
+                this.NameBox.Text = db.Todos
+                    .Where(x => x.Id == (this.DetailList.SelectedItem as TodoDetail)!.TodoId)
+                    .ToList()[0].Name;
+                this.DescripBox.Text = (this.DetailList.SelectedItem as TodoDetail)!.Descrip;
+                this.IsDone.Checked = (this.DetailList.SelectedItem as TodoDetail)!.IsDone;
             }
         }
 
