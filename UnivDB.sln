@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnivDB", "UnivDB\UnivDB.csproj", "{98198D17-9119-4882-AF8A-7EC701698E5F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinForm", "WinForm\WinForm.csproj", "{CFDD8C04-B8DA-48AF-A9C1-614B298BFAA7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P0920", "P0920\P0920.csproj", "{EADB64F7-4B40-42C0-8D6C-3471B07CA8CC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P0925", "P0925\P0925.csproj", "{99290238-5F7E-4708-90B3-8DEACDF47747}"
@@ -28,7 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P1018", "P1018\P1018.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "P1023", "P1023\P1023.csproj", "{867D7209-3880-464B-A8D1-763B4A96FAFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamM", "ExamM\ExamM.csproj", "{87B6CF4A-F045-4C87-BF1C-A2DAD488E7DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamM", "ExamM\ExamM.csproj", "{87B6CF4A-F045-4C87-BF1C-A2DAD488E7DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P1030", "P1030\P1030.csproj", "{9671CBD7-A4E7-4308-9B43-B63A7810D13F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,14 +34,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{98198D17-9119-4882-AF8A-7EC701698E5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98198D17-9119-4882-AF8A-7EC701698E5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98198D17-9119-4882-AF8A-7EC701698E5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98198D17-9119-4882-AF8A-7EC701698E5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFDD8C04-B8DA-48AF-A9C1-614B298BFAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFDD8C04-B8DA-48AF-A9C1-614B298BFAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFDD8C04-B8DA-48AF-A9C1-614B298BFAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFDD8C04-B8DA-48AF-A9C1-614B298BFAA7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EADB64F7-4B40-42C0-8D6C-3471B07CA8CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EADB64F7-4B40-42C0-8D6C-3471B07CA8CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EADB64F7-4B40-42C0-8D6C-3471B07CA8CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -80,6 +70,10 @@ Global
 		{87B6CF4A-F045-4C87-BF1C-A2DAD488E7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87B6CF4A-F045-4C87-BF1C-A2DAD488E7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87B6CF4A-F045-4C87-BF1C-A2DAD488E7DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9671CBD7-A4E7-4308-9B43-B63A7810D13F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9671CBD7-A4E7-4308-9B43-B63A7810D13F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9671CBD7-A4E7-4308-9B43-B63A7810D13F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9671CBD7-A4E7-4308-9B43-B63A7810D13F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
