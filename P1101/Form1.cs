@@ -17,61 +17,89 @@ namespace P1101
             RefreshList();
         }
 
-        private void RefreshList()
+        private void RefreshList(bool isAll = true)
         {
-            this.listBox1.Items.Clear();
+            if (isAll)
+            {
+                this.listBox1.Items.Clear();
+                this.listBox3.Items.Clear();
+            }
             this.listBox2.Items.Clear();
-            this.listBox3.Items.Clear();
             this.listBox4.Items.Clear();
 
             using (HospitalDbContext db = new HospitalDbContext())
             {
-                foreach (var item in db.Doctors)
+                if (isAll)
                 {
-                    this.listBox1.Items.Add(item);
+                    foreach (var item in db.Doctors)
+                    {
+                        this.listBox1.Items.Add(item);
+                    }
+
+                    foreach (var item in db.Patients)
+                    {
+                        this.listBox3.Items.Add(item);
+                    }
                 }
 
-                foreach (var item in db.Patients)
+                if (this.listBox1.SelectedItem != null)
                 {
-                    this.listBox3.Items.Add(item);
+                    var list1 = db.DoctorPatients
+                        .Where(x => x.DoctorId == (this.listBox1.SelectedItem as Doctor)!.Id)
+                        .Select(x => x.Patient)
+                        .ToList();
+
+                    foreach (var item in list1)
+                    {
+                        this.listBox2.Items.Add(item);
+                    }
+                }
+
+                if (this.listBox3.SelectedItem != null)
+                {
+                    var list2 = db.DoctorPatients
+                        .Where(x => x.PatientId == (this.listBox3.SelectedItem as Patient)!.Id)
+                        .Select(x => x.Doctor)
+                        .ToList();
+
+                    foreach (var item in list2)
+                    {
+                        this.listBox4.Items.Add(item);
+                    }
                 }
             }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.listBox2.Items.Clear();
-
-            using (HospitalDbContext db = new HospitalDbContext())
-            {
-                var list = db.DoctorPatients
-                    .Where(x => x.DoctorId == (this.listBox1.SelectedItem as Doctor)!.Id)
-                    .Select(x => x.Patient)
-                    .ToList();
-                
-                foreach (var item in list)
-                {
-                    this.listBox2.Items.Add(item);
-                }
-            }
+            RefreshList(false);
         }
 
         private void listBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.listBox4.Items.Clear();
+            RefreshList(false);
+        }
 
+        private void DeleteClick(object sender, EventArgs e)
+        {
             using (HospitalDbContext db = new HospitalDbContext())
             {
                 var list = db.DoctorPatients
-                    .Where(x => x.PatientId == (this.listBox3.SelectedItem as Patient)!.Id)
-                    .Select(x => x.Doctor)
+                    .Where(x => x.PatientId == (this.listBox2.SelectedItem as Patient)!.Id)
                     .ToList();
 
                 foreach (var item in list)
                 {
-                    this.listBox4.Items.Add(item);
+                    db.Remove(item);
                 }
+
+                db.Remove(db.Patients
+                    .Where(x => x.Id == (this.listBox2.SelectedItem as Patient)!.Id).ToList()[0]);
+
+                db.SaveChanges();
             }
-        } 
+
+            RefreshList();
+        }
     }
 }

@@ -32,6 +32,7 @@
             listBox2 = new ListBox();
             listBox3 = new ListBox();
             listBox4 = new ListBox();
+            button1 = new Button();
             SuspendLayout();
             // 
             // listBox1
@@ -72,11 +73,22 @@
             listBox4.Size = new Size(150, 384);
             listBox4.TabIndex = 0;
             // 
+            // button1
+            // 
+            button1.Location = new Point(168, 450);
+            button1.Name = "button1";
+            button1.Size = new Size(150, 29);
+            button1.TabIndex = 1;
+            button1.Text = "Delete";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += DeleteClick;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(736, 491);
+            Controls.Add(button1);
             Controls.Add(listBox4);
             Controls.Add(listBox3);
             Controls.Add(listBox2);
@@ -92,5 +104,6 @@
         private ListBox listBox2;
         private ListBox listBox3;
         private ListBox listBox4;
+        private Button button1;
     }
 }
