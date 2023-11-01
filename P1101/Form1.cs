@@ -84,22 +84,14 @@ namespace P1101
         {
             using (HospitalDbContext db = new HospitalDbContext())
             {
-                var list = db.DoctorPatients
-                    .Where(x => x.PatientId == (this.listBox2.SelectedItem as Patient)!.Id)
-                    .ToList();
-
-                foreach (var item in list)
-                {
-                    db.Remove(item);
-                }
-
-                db.Remove(db.Patients
-                    .Where(x => x.Id == (this.listBox2.SelectedItem as Patient)!.Id).ToList()[0]);
+                db.Remove(db.DoctorPatients
+                    .Where(x => x.DoctorId == (this.listBox1.SelectedItem as Doctor)!.Id 
+                    && x.PatientId == (this.listBox2.SelectedItem as Patient)!.Id).ToList()[0]);
 
                 db.SaveChanges();
             }
 
-            RefreshList();
+            RefreshList(false);
         }
     }
 }
