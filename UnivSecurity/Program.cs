@@ -31,6 +31,10 @@ namespace UnivSecurity
                         List<DES> des1 = new List<DES>();
                         List<BitArray> output = new List<BitArray>();
 
+                        // Initial Vector - 편의상 111...111로 생성
+                        BitArray iv = new BitArray(64, true);
+                        input[0] = input[0].Xor(iv);
+
                         // 각 리스트의 원소에 input 64 bit와 키를 넣고 암호화 후 output 리스트에 결과를 추가
                         for (int i = 0; i < input.Count; i++)
                         {
@@ -42,6 +46,11 @@ namespace UnivSecurity
 
                             des1[i].Encrypt();
                             output.Add(des1[i].Output);
+
+                            if (i < input.Count - 1)
+                            {
+                                input[i + 1] = input[i + 1].Xor(output[i]);
+                            } 
                         }
 
                         // 모두 합쳐서 최종 파일로 생성
@@ -71,6 +80,9 @@ namespace UnivSecurity
                         List<DES> des2 = new List<DES>();
                         List<BitArray> rebirth = new List<BitArray>();
 
+                        // Initial Vector - 편의상 111...111로 생성
+                        BitArray iv = new BitArray(64, true);
+
                         // 각 리스트의 원소에 암호화된 input 64 bit와 키를 넣고 복호화 후 output 리스트에 결과를 추가
                         for (int i = 0; i < encryption.Count; i++)
                         {
@@ -81,6 +93,16 @@ namespace UnivSecurity
                             });
 
                             des2[i].Decrypt();
+
+                            if (i == 0)
+                            {
+                                des2[i].Output = des2[i].Output.Xor(iv);
+                            }
+                            else
+                            {
+                                des2[i].Output = des2[i].Output.Xor(des2[i - 1].Input);
+                            }
+
                             rebirth.Add(des2[i].Output);
                         }
 
