@@ -16,6 +16,10 @@ namespace P1115
             {
                 e.Value = (e.ListItem as CallLog)!.When + "\t(" + (e.ListItem as CallLog)!.Duration + ")";
             };
+            this.AllCallLogList.Format += (s, e) =>
+            {
+                e.Value = (e.ListItem as CallLogForView)!.FirstName + "\t" + (e.ListItem as CallLogForView)!.When + "\t(" + (e.ListItem as CallLogForView)!.Duration + ")";
+            };
 
             list = Contact.SampleList();
 
@@ -89,7 +93,7 @@ namespace P1115
             string text = this.textBox1.Text;
 
             var sublist = this.list
-                .Where(x => x.FirstName.ToLower().Contains(text.ToLower()) 
+                .Where(x => x.FirstName.ToLower().Contains(text.ToLower())
                 || x.LastName.ToLower().Contains(text.ToLower())
                 || x.Phone.ToString().ToLower().Contains(text.ToLower())).ToList();
 
@@ -98,5 +102,52 @@ namespace P1115
             foreach (var item in sublist)
                 this.contactListBox.Items.Add(item);
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            this.AllCallLogList.Items.Clear();
+
+            var callLogs = CallLog.SampleList();
+
+            var q = from call in callLogs
+                    join cont in list
+                    on call.Number equals cont.Phone
+                    select new CallLogForView
+                    {
+                        FirstName = cont.FirstName,
+                        Duration = call.Duration,
+                        IsIncoming = call.Incoming,
+                        PhoneNumber = call.Number,
+                        When = call.When,
+                    };
+
+            foreach (var item in q)
+            {
+                this.AllCallLogList.Items.Add(item);
+            }
+
+            //foreach (var item in callLogs)
+            //{
+            //    var contact = list.Where(x => x.Phone == item.Number).FirstOrDefault();
+
+            //    AllCallLogList.Items.Add(new CallLogForView()
+            //    {
+            //        FirstName = contact.FirstName,
+            //        PhoneNumber = item.Number,
+            //        Duration = item.Duration,
+            //        When = item.When,
+            //        IsIncoming = item.Incoming
+            //    });
+            //}
+        }
+    }
+
+    public class CallLogForView
+    {
+        public string FirstName { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime When { get; set; }
+        public bool IsIncoming { get; set; }
+        public int Duration { get; set; }
     }
 }
