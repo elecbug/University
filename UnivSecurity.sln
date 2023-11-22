@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnivSecurity", "UnivSecurity\UnivSecurity.csproj", "{E7F82E1D-E394-480F-BF62-B709C8EA8F45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKI", "PKI\PKI.csproj", "{FFCB6DAA-0E3D-4E7E-BB2B-56A5C69C0E8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKI", "PKI\PKI.csproj", "{B5B60731-2C83-471F-9073-5B2E4B038D41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{E7F82E1D-E394-480F-BF62-B709C8EA8F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7F82E1D-E394-480F-BF62-B709C8EA8F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7F82E1D-E394-480F-BF62-B709C8EA8F45}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FFCB6DAA-0E3D-4E7E-BB2B-56A5C69C0E8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FFCB6DAA-0E3D-4E7E-BB2B-56A5C69C0E8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FFCB6DAA-0E3D-4E7E-BB2B-56A5C69C0E8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FFCB6DAA-0E3D-4E7E-BB2B-56A5C69C0E8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5B60731-2C83-471F-9073-5B2E4B038D41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5B60731-2C83-471F-9073-5B2E4B038D41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5B60731-2C83-471F-9073-5B2E4B038D41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5B60731-2C83-471F-9073-5B2E4B038D41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
