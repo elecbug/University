@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using PKI;
+using System.Diagnostics;
 
 public class WebServer
 {
@@ -36,7 +37,7 @@ public class WebServer
             Sockets.Add(socketId);
         }
 
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[1024];
         await socket.ReceiveAsync(buffer);
 
         string strId = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -51,10 +52,13 @@ public class WebServer
 
         while (true)
         {
-            buffer = new byte[4096];
+            buffer = new byte[65536];
             
             await socket.ReceiveAsync(buffer);
             string text = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+
+            text = text.Trim('\0');
+            Debug.WriteLine(text);
 
             await Toss(text);
         }

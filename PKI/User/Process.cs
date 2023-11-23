@@ -25,17 +25,30 @@ namespace PKI.User
 
         public override void ReadMethod(string text)
         {
-            string[] split = text.Split(',');
+            string[] split = Command.Split(text);
 
             switch (split[2])
             {
                 case Command.RecvKey:
-                    RSACryptoServiceProvider ca = new RSACryptoServiceProvider();
-                    int a;
-                    ca.ImportRSAPublicKey(CaPublicKey, out a);
-                    byte[] data = Encoding.UTF8.GetBytes(split[3]);
+                    int o;
 
-                    Console.WriteLine("Get key from CA, Your private key is [" + Command.ByteArrayToString(CaPublicKey) + "]");
+                    RSA ca = RSA.Create(1024);
+
+                    byte[] crypto = Convert.FromBase64String(split[4]);
+
+                    Console.WriteLine(Command.ByteArrayToString(crypto));
+
+                    if (ca.VerifyData(Command.Sign, crypto, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                    {
+                        byte[] data = Command.StringToByteArray(split[3]);
+
+                        Console.WriteLine("Get key from CA, Your private key is [" + Command.ByteArrayToString(data) + "]");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid verify");
+                    }
+
                     break;
             }
         }

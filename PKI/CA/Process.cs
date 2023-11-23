@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,10 @@ namespace PKI.CA
             public byte[] PublicKey { get; set; } = new byte[2048];
         }
 
-        private RSACryptoServiceProvider UsingCA { get; set; }
+        private RSA UsingCA { get; set; }
         private List<KeyPair> KeyPairs { get; set; }
 
-        public Process(RSACryptoServiceProvider usingCA) : base(0, new TcpClient())
+        public Process(RSA usingCA) : base(0, new TcpClient())
         {
             UsingCA = usingCA;
             KeyPairs = new List<KeyPair>();
@@ -41,15 +42,21 @@ namespace PKI.CA
 
                     if (Signal! == true)
                     {
-                        RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048);
+                        RSA rsa = RSA.Create(1024);
 
                         KeyPair pair = new KeyPair()
                         { 
                             Id = send,
                             PublicKey = rsa.ExportRSAPublicKey(),
                         };
+
+                        byte[] sign = UsingCA.SignData(Command.Sign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+                        Console.WriteLine(Command.ByteArrayToString(sign));
+
                         string data = Command.Create(Id, send, Command.RecvKey, 
-                            Encoding.UTF8.GetString(rsa.ExportRSAPrivateKey()));
+                            Command.ByteArrayToString(rsa.ExportRSAPrivateKey()),
+                            Convert.ToBase64String(sign));
 
                         KeyPairs.Add(pair);
 

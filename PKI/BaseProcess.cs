@@ -42,7 +42,7 @@ namespace PKI
         {
             while (true)
             {
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[65536];
 
                 await Client.GetStream().ReadAsync(buffer);
                 ReadMethod(Encoding.UTF8.GetString(buffer));
