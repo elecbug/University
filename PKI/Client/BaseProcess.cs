@@ -6,19 +6,26 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PKI
+namespace PKI.Client
 {
     public abstract class BaseProcess
     {
+        public class KeyPair
+        {
+            public int Id { get; set; }
+            public byte[] PublicKey { get; set; } = new byte[2048];
+        }
+
         public int Id { get; private set; }
         public TcpClient Client { get; private set; }
-        private object Locker { get; set; } = new object();
         protected bool? Signal { get; set; } = null;
+        protected List<KeyPair> KeyPairs { get; set; }
 
         public BaseProcess(int id, TcpClient client)
         {
             Id = id;
             Client = client;
+            KeyPairs = new List<KeyPair>();
         }
 
         public async void Run()

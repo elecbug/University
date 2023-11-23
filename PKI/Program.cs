@@ -31,30 +31,27 @@ public class Program
                 }
                 else if (num == 1)
                 {
-                    RSA usingCA = RSA.Create(1024);
-                    RSAParameters data = usingCA.ExportParameters(true);
+                    RSACryptoServiceProvider usingCA = new RSACryptoServiceProvider();
+                    byte[] data = usingCA.ExportRSAPublicKey();
 
-                    new PKI.CA.Process(data).Run();
+                    new PKI.Client.CA.Process(usingCA).Run();
 
-                    string str = usingCA.ToXmlString(false);
-                    using StreamWriter writer = new StreamWriter("key.pub");
-                    writer.Write(str);
+                    using BinaryWriter writer = new BinaryWriter(File.OpenWrite("key.pub"));
+                    writer.Write(data);
                 }
                 else
                 {
                     RSA rsa = RSA.Create(1024);
-                    using StreamReader reader = new StreamReader("key.pub");
-                    string str = reader.ReadToEnd();
-                    rsa.FromXmlString(str);
-                    RSAParameters data = rsa.ExportParameters(false);
+                    using BinaryReader reader = new BinaryReader(File.OpenRead("key.pub"));
+                    byte[] data = reader.ReadBytes(1024);
                     
                     switch (num)
                     {
                         case 2:
-                            new PKI.User.Process(data).Run();
+                            new PKI.Client.User.Process(data).Run();
                             break;
                         case 3:
-                            new PKI.Observer.Process(data).Run();
+                            new PKI.Client.Observer.Process(data).Run();
                             break;
                         default: throw new Exception();
                     }

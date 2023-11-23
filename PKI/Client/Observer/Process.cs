@@ -6,19 +6,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PKI.Observer
+namespace PKI.Client.Observer
 {
     public class Process : BaseProcess
     {
         private byte[] CaPublicKey { get; set; }
 
-        public Process(RSAParameters rsa)
+        public Process(byte[] pubKey)
             : base(-1, new TcpClient())
         {
-            RSACryptoServiceProvider r = new RSACryptoServiceProvider();
-            r.ImportParameters(rsa);
-
-            CaPublicKey = r.ExportRSAPublicKey();
+            CaPublicKey = pubKey;
         }
 
         public override void ReadMethod(string text)

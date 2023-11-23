@@ -1,8 +1,8 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using PKI;
 using System.Diagnostics;
+using PKI.Client;
 
 public class WebServer
 {
