@@ -10,12 +10,11 @@ namespace PKI
 {
     public class Command
     {
-        public const string GetKey = "get-key";
+        public const string GenerateKey = "gen-key";
         public const string RecvKey = "recv-key";
         public const string Cancel = "cancel";
-        public static readonly byte[] Sign = Encoding.UTF8.GetBytes("@@#@@#@$#RGGFGZGFZGFDYSTH");
-
-        public static readonly SHA256 SHA256 = SHA256.Create();
+        public const string GetKey = "get-key";
+        public static readonly byte[] Sign = Encoding.UTF8.GetBytes("This is sign text :)");
 
         public static string Create(int sendId, int recvId, string command, string value = "", string sign = "") 
             => sendId + "," + recvId + "," + command + "," + value + "," + sign;

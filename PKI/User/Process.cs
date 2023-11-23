@@ -12,15 +12,18 @@ namespace PKI.User
     {
         private byte[] CaPublicKey { get; set; }
 
-        public Process(byte[] caPublicKey)
+        public Process(RSAParameters rsa)
             : base(new Random(DateTime.Now.Microsecond).Next(1, int.MaxValue), new TcpClient())
         {
-            CaPublicKey = caPublicKey;
+            RSACryptoServiceProvider r = new RSACryptoServiceProvider();
+            r.ImportParameters(rsa);
+
+            CaPublicKey = r.ExportRSAPublicKey();
         }
 
         public void GetPublicKeyPair()
         {
-            
+
         }
 
         public override void ReadMethod(string text)
@@ -33,16 +36,15 @@ namespace PKI.User
                     int o;
 
                     RSA ca = RSA.Create(1024);
+                    ca.ImportRSAPublicKey(CaPublicKey, out o);
 
-                    byte[] crypto = Convert.FromBase64String(split[4]);
-
-                    Console.WriteLine(Command.ByteArrayToString(crypto));
+                    byte[] crypto = Command.StringToByteArray(split[4]);
 
                     if (ca.VerifyData(Command.Sign, crypto, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                     {
                         byte[] data = Command.StringToByteArray(split[3]);
 
-                        Console.WriteLine("Get key from CA, Your private key is [" + Command.ByteArrayToString(data) + "]");
+                        Console.WriteLine("Verified key! Get key from CA, Your private key is [" + Command.ByteArrayToString(data) + "]");
                     }
                     else
                     {
@@ -55,16 +57,24 @@ namespace PKI.User
 
         public override void WriteMethod(string text)
         {
-            switch (text)
+            if (text.Split(' ')[0] == Command.GetKey)
             {
-                case Command.GetKey:
-                    Client.GetStream()
-                        .WriteAsync(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey)));
-                    break;
-                default:
-                    Console.WriteLine("Invalid text");
-                    break;
+                Client.GetStream()
+                    .WriteAsync(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, text.Split(' ')[1])));
+            }
+            else
+            {
+                switch (text)
+                {
+                    case Command.GenerateKey:
+                        Client.GetStream()
+                            .WriteAsync(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GenerateKey)));
+                        break;
+                    default:
+                        Console.WriteLine("Invalid text");
+                        break;
 
+                }
             }
         }
     }

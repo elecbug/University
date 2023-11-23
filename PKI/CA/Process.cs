@@ -18,12 +18,15 @@ namespace PKI.CA
             public byte[] PublicKey { get; set; } = new byte[2048];
         }
 
-        private RSA UsingCA { get; set; }
+        private RSACryptoServiceProvider UsingCA { get; set; }
         private List<KeyPair> KeyPairs { get; set; }
 
-        public Process(RSA usingCA) : base(0, new TcpClient())
+        public Process(RSAParameters rsa) : base(0, new TcpClient())
         {
-            UsingCA = usingCA;
+            RSACryptoServiceProvider r = new RSACryptoServiceProvider();
+            r.ImportParameters(rsa);
+
+            UsingCA = r;
             KeyPairs = new List<KeyPair>();
         }
 
@@ -35,7 +38,7 @@ namespace PKI.CA
 
             switch (split[2])
             {
-                case Command.GetKey:
+                case Command.GenerateKey:
                     Console.WriteLine("The user [" + send + "] want to RSA key. Accept?");
 
                     while (Signal == null) ;
@@ -51,12 +54,10 @@ namespace PKI.CA
                         };
 
                         byte[] sign = UsingCA.SignData(Command.Sign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-
-                        Console.WriteLine(Command.ByteArrayToString(sign));
-
+                        
                         string data = Command.Create(Id, send, Command.RecvKey, 
                             Command.ByteArrayToString(rsa.ExportRSAPrivateKey()),
-                            Convert.ToBase64String(sign));
+                            Command.ByteArrayToString(sign));
 
                         KeyPairs.Add(pair);
 
