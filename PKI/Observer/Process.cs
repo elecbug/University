@@ -9,11 +9,19 @@ namespace PKI.Observer
 {
     public class Process : BaseProcess
     {
-        private byte[] RsaPublicKey { get; set; }
+        private byte[] CaPublicKey { get; set; }
 
-        public Process(byte[] rsaPublicKey) : base(-1, new TcpClient())
+        public Process(byte[] caPublicKey) : base(-1, new TcpClient())
         {
-            RsaPublicKey = rsaPublicKey;
+            CaPublicKey = caPublicKey;
+        }
+
+        public override void ReadMethod(string text)
+        {
+        }
+
+        public override void WriteMethod(string text)
+        {
         }
     }
 }

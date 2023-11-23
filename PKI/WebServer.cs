@@ -73,7 +73,6 @@ public class WebServer
         string[] split = Command.Split(text);
         int sendId = int.Parse(split[0]);
         int recvId = int.Parse(split[1]);
-        string msg = split[2];
         SocketId recv;
 
         lock (Locker)
@@ -81,6 +80,6 @@ public class WebServer
             recv = Sockets.Where(x => x.Id == recvId).First();
         }
 
-        await recv.Socket!.SendAsync(Encoding.UTF8.GetBytes(msg));
+        await recv.Socket!.SendAsync(Encoding.UTF8.GetBytes(text));
     }
 }

@@ -12,6 +12,8 @@ namespace PKI
     {
         public int Id { get; private set; }
         public TcpClient Client { get; private set; }
+        private object Locker { get; set; } = new object();
+        protected bool? Signal { get; set; } = null;
 
         public BaseProcess(int id, TcpClient client)
         {
@@ -31,6 +33,47 @@ namespace PKI
             await Client.GetStream().ReadAsync(bytes);
 
             Console.WriteLine(Encoding.UTF8.GetString(bytes));
+
+            new Thread(async () => { await WhileRead(); }).Start();
+            new Thread(WhileWrite).Start();
         }
+
+        private async Task WhileRead()
+        {
+            while (true)
+            {
+                byte[] buffer = new byte[4096];
+
+                await Client.GetStream().ReadAsync(buffer);
+                ReadMethod(Encoding.UTF8.GetString(buffer));
+            }
+        }
+
+        private void WhileWrite()
+        {
+            while (true)
+            {
+                Signal = null;
+
+                string? str = Console.ReadLine();
+
+                if (str != null)
+                {
+                    if (str.ToLower() == "y")
+                    {
+                        Signal = true;
+                    }
+                    else if (str.ToLower() == "n")
+                    {
+                        Signal = false;
+                    }
+
+                    WriteMethod(str);
+                }
+            }
+        }
+
+        public abstract void ReadMethod(string text);
+        public abstract void WriteMethod(string text);
     }
 }

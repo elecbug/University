@@ -16,7 +16,7 @@ public class Program
         Console.WriteLine("2. User:       User who receive normally service.");
         Console.WriteLine("3. Observer:   Role that can secretly collect all packets and send fake packets (like Trudy)");
 
-        RSA usingCA = RSA.Create(2048);
+        RSACryptoServiceProvider usingCA = new RSACryptoServiceProvider(2048);
 
         while (true)
         {
