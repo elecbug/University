@@ -16,10 +16,13 @@ namespace PKI.Client.Observer
             : base(-1, new TcpClient())
         {
             CaPublicKey = pubKey;
+
+            Console.WriteLine("You are the Observer, You can read all message and write message used fake ID in internet.");
         }
 
         public override void ReadMethod(string text)
         {
+            Console.WriteLine(text.Replace(Command.Splitter, " "));
         }
 
         public override void WriteMethod(string text)

@@ -17,29 +17,32 @@ namespace PKI.Client.User
             : base(new Random(DateTime.Now.Microsecond).Next(1, 1000), new TcpClient())
         {
             CaPublicKey = pubKey;
-        }
 
-        public void GetPublicKeyPair()
-        {
-
+            Console.WriteLine("You can use the services.");
+            Console.WriteLine(" > gen-key: Generate your key pair through the CA.");
+            Console.WriteLine(" > get-key [ID]: Get other user's public key through the CA.");
+            Console.WriteLine(" > send [ID] [msg]: Send message the other user if you know that's public key.");
         }
 
         public override void ReadMethod(string text)
         {
+            text = text.TrimEnd('\0');
+
             string[] split = Command.Split(text);
 
             switch (split[2])
             {
-                case Command.RecvKey:
+                case Command.RecvGenKey:
                     {
+                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GenerateKey)));
                         int o;
 
-                        RSA ca = RSA.Create(1024);
+                        RSACryptoServiceProvider ca = new RSACryptoServiceProvider();
                         ca.ImportRSAPublicKey(CaPublicKey, out o);
 
                         byte[] code = Command.StringToByteArray(split[4]);
 
-                        if (ca.VerifyData(Command.Sign, code, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                        if (ca.VerifyData(sign, code, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                         {
                             byte[] data = Command.StringToByteArray(split[3]);
                             PersonalPrivateKey = data;
@@ -56,14 +59,15 @@ namespace PKI.Client.User
 
                 case Command.RecvGetKey:
                     {
+                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, split[3].Split(':')[0])));
                         int o;
 
-                        RSA ca = RSA.Create(1024);
+                        RSACryptoServiceProvider ca = new RSACryptoServiceProvider();
                         ca.ImportRSAPublicKey(CaPublicKey, out o);
 
-                        byte[] crypto = Command.StringToByteArray(split[4]);
+                        byte[] code = Command.StringToByteArray(split[4]);
 
-                        if (ca.VerifyData(Command.Sign, crypto, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                        if (ca.VerifyData(sign, code, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                         {
                             KeyPair pair = new KeyPair()
                             {
@@ -101,7 +105,7 @@ namespace PKI.Client.User
 
                         if (pair == null)
                         {
-                            Console.WriteLine("CA do not know " + target + "'s data.");
+                            Console.WriteLine(" > You do not know [" + target + "]'s public key.");
 
                             return;
                         }
@@ -109,7 +113,8 @@ namespace PKI.Client.User
                         RSACryptoServiceProvider p = new RSACryptoServiceProvider();
                         p.ImportRSAPublicKey(pair.PublicKey, out o);
 
-                        if (p.VerifyData(Command.Sign, code, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+                        if (p.VerifyData(SHA256.HashData(Encoding.UTF8.GetBytes(msg)), code,
+                            HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                         {
                             Console.WriteLine(" > This message is verified! But, you must check message time.");
                         }
@@ -121,10 +126,19 @@ namespace PKI.Client.User
 
         public override void WriteMethod(string text)
         {
+            text = text.TrimEnd('\0');
+
             if (text.Split(' ')[0] == Command.GetKey)
             {
-                Client.GetStream()
-                    .WriteAsync(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, text.Split(' ')[1])));
+                try
+                {
+                    Client.GetStream()
+                        .WriteAsync(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, text.Split(' ')[1])));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Invalid text.");
+                }
             }
             else if (text.Split(' ')[0] == Command.SendMsg)
             {
@@ -133,7 +147,6 @@ namespace PKI.Client.User
                 RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
                 rsa.ImportRSAPrivateKey(PersonalPrivateKey, out o);
 
-                byte[] sign = rsa.SignData(Command.Sign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
                 int target = 0;
 
                 try
@@ -142,7 +155,7 @@ namespace PKI.Client.User
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Invaild ID");
+                    Console.WriteLine("Invaild ID.");
                     Console.WriteLine(ex);
 
                     return;
@@ -152,7 +165,7 @@ namespace PKI.Client.User
 
                 if (pair == null)
                 {
-                    Console.WriteLine("You do not know " + target + "'s data.");
+                    Console.WriteLine("You do not know [" + target + "]'s data.");
 
                     return;
                 }
@@ -167,7 +180,10 @@ namespace PKI.Client.User
                     result += text.Split(' ')[i] + " ";
                 }
 
-                result += " (" + DateTime.Now.ToString("yy.MM.dd HH:mm:ss") + ")";
+                result += " (" + DateTime.Now.ToString("yy.MM.dd HH:mm:ss") + ").";
+
+                byte[] sign = rsa.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(result)),
+                    HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                 byte[] encry = p.Encrypt(Encoding.UTF8.GetBytes(result), false);
 

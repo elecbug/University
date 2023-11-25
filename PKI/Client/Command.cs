@@ -10,14 +10,15 @@ namespace PKI.Client
 {
     public class Command
     {
-        public const string GenerateKey = "gen-key";
-        public const string RecvKey = "recv-key";
+        public const string GenerateKey = ";gen-key";
+        public const string RecvGenKey = "recv-gen-key";
         public const string Cancel = "cancel";
-        public const string GetKey = "get-key";
+        public const string GetKey = ";get-key";
         public const string RecvGetKey = "recv-get-key";
-        public const string SendMsg = "send-msg";
-        public const string RecvMsg = "recv-msg";
-        public static readonly byte[] Sign = Encoding.UTF8.GetBytes("This is sign text :)");
+        public const string SendMsg = ";send";
+        public const string RecvMsg = "recv-send";
+        public const string OnlyAccept = ";only-y";
+
         public const string Splitter = "adfhkl;dfskdsfkhj;dfshkjl";
 
         public static string Create(int sendId, int recvId, string command, string value = "", string sign = "")

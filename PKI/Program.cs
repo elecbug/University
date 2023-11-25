@@ -61,7 +61,7 @@ public class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Invalid text.\n" + ex.ToString());
+                Console.WriteLine("Invalid text.");
                 continue;
             }
         }

@@ -62,15 +62,15 @@ namespace PKI.Client
             {
                 Signal = null;
 
-                string? str = Console.ReadLine();
+                string? str = ";" + Console.ReadLine();
 
                 if (str != null)
                 {
-                    if (str.ToLower() == "y")
+                    if (str.ToLower() == ";y")
                     {
                         Signal = true;
                     }
-                    else if (str.ToLower() == "n")
+                    else if (str.ToLower() == ";n")
                     {
                         Signal = false;
                     }

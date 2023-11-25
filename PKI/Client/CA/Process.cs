@@ -13,14 +13,21 @@ namespace PKI.Client.CA
     public class Process : BaseProcess
     {
         private RSACryptoServiceProvider UsingRSA { get; set; }
+        public bool OnlyAccept { get; private set; }
 
         public Process(RSACryptoServiceProvider rsa) : base(0, new TcpClient())
         {
             UsingRSA = rsa;
+            OnlyAccept = false;
+
+            Console.WriteLine("You can provide to accept through [y/n].");
+            Console.WriteLine("Only provide to accept if you type " + Command.OnlyAccept[1..]);
         }
 
         public override async void ReadMethod(string text)
         {
+            text = text.TrimEnd('\0');
+
             string[] split = Command.Split(text);
             int send = int.Parse(split[0]);
             int recv = int.Parse(split[1]);
@@ -31,9 +38,9 @@ namespace PKI.Client.CA
                     {
                         Console.WriteLine("The user [" + send + "] want to new RSA key. Accept?");
 
-                        while (Signal == null) ;
+                        while (Signal == null && OnlyAccept == false) ;
 
-                        if (Signal! == true)
+                        if (Signal! == true || OnlyAccept == true)
                         {
                             RSA rsa = RSA.Create(1024);
 
@@ -43,9 +50,9 @@ namespace PKI.Client.CA
                                 PublicKey = rsa.ExportRSAPublicKey(),
                             };
 
-                            byte[] sign = UsingRSA.SignData(Command.Sign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-                            string data = Command.Create(Id, send, Command.RecvKey,
+                            string data = Command.Create(Id, send, Command.RecvGenKey,
                                 Command.ByteArrayToString(rsa.ExportRSAPrivateKey()),
                                 Command.ByteArrayToString(sign));
 
@@ -64,20 +71,20 @@ namespace PKI.Client.CA
                     {
                         Console.WriteLine("The user [" + send + "] want to [" + split[3] + "]'s public key. Accept?");
 
-                        while (Signal == null) ;
+                        while (Signal == null && OnlyAccept == false) ;
 
-                        if (Signal! == true)
+                        if (Signal! == true || OnlyAccept == true)
                         {
                             KeyPair? pair = KeyPairs.Where(x => x.Id == int.Parse(split[3])).FirstOrDefault();
 
                             if (pair == null)
                             {
-                                Console.WriteLine("CA do not know " + split[3] + "'s data.");
+                                Console.WriteLine("You are not know [" + split[3] + "]'s data.");
 
                                 return;
                             }
 
-                            byte[] sign = UsingRSA.SignData(Command.Sign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                             string data = Command.Create(Id, send, Command.RecvGetKey,
                                 pair!.Id + ":" + Command.ByteArrayToString(pair!.PublicKey),
@@ -98,6 +105,12 @@ namespace PKI.Client.CA
 
         public override void WriteMethod(string text)
         {
+            if (text == Command.OnlyAccept)
+            {
+                OnlyAccept = true;
+
+                Console.WriteLine("Is only accept mode.");
+            }
         }
     }
 }
