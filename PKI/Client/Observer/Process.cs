@@ -22,11 +22,12 @@ namespace PKI.Client.Observer
 
         public override void ReadMethod(string text)
         {
-            Console.WriteLine(text.Replace(Command.Splitter, " "));
+            Console.WriteLine(text);
         }
 
-        public override void WriteMethod(string text)
+        public override async void WriteMethod(string text)
         {
+            await Client.GetStream().WriteAsync(Encoding.UTF8.GetBytes(text));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace PKI.Client
         public const string RecvMsg = "recv-send";
         public const string OnlyAccept = ";only-y";
 
-        public const string Splitter = "adfhkl;dfskdsfkhj;dfshkjl";
+        public const string Splitter = "[SPL ]";
 
         public static string Create(int sendId, int recvId, string command, string value = "", string sign = "")
             => sendId + Splitter + recvId + Splitter + command + Splitter + value + Splitter + sign;

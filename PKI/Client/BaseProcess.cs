@@ -64,6 +64,11 @@ namespace PKI.Client
 
                 string? str = ";" + Console.ReadLine();
 
+                if (Id == -1)
+                {
+                    str = str[1..];
+                }
+
                 if (str != null)
                 {
                     if (str.ToLower() == ";y")

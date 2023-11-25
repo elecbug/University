@@ -34,7 +34,8 @@ namespace PKI.Client.User
             {
                 case Command.RecvGenKey:
                     {
-                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GenerateKey)));
+                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GenerateKey)
+                            + split[3]));
                         int o;
 
                         RSACryptoServiceProvider ca = new RSACryptoServiceProvider();
@@ -59,7 +60,8 @@ namespace PKI.Client.User
 
                 case Command.RecvGetKey:
                     {
-                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, split[3].Split(':')[0])));
+                        byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, 
+                            split[3].Split(':')[0]) + split[3]));
                         int o;
 
                         RSACryptoServiceProvider ca = new RSACryptoServiceProvider();
@@ -94,7 +96,18 @@ namespace PKI.Client.User
                         RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
                         rsa.ImportRSAPrivateKey(PersonalPrivateKey, out o);
 
-                        string msg = Encoding.UTF8.GetString(rsa.Decrypt(Command.StringToByteArray(split[3]), false));
+                        string msg = "";
+                        
+                        try
+                        {
+                            msg = Encoding.UTF8.GetString(rsa.Decrypt(Command.StringToByteArray(split[3]), false));
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Can not decrypt message.");
+
+                            break;
+                        }
 
                         Console.WriteLine("[" + split[0] + "]: " + msg);
 
@@ -113,10 +126,14 @@ namespace PKI.Client.User
                         RSACryptoServiceProvider p = new RSACryptoServiceProvider();
                         p.ImportRSAPublicKey(pair.PublicKey, out o);
 
-                        if (p.VerifyData(SHA256.HashData(Encoding.UTF8.GetBytes(msg)), code,
+                        if (p.VerifyData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), code,
                             HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                         {
-                            Console.WriteLine(" > This message is verified! But, you must check message time.");
+                            Console.WriteLine(" > This message is verifiy! But, you must check message time.");
+                        }
+                        else
+                        {
+                            Console.WriteLine(" > This message is not verifiy.");
                         }
 
                         break;
@@ -182,10 +199,10 @@ namespace PKI.Client.User
 
                 result += " (" + DateTime.Now.ToString("yy.MM.dd HH:mm:ss") + ").";
 
-                byte[] sign = rsa.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(result)),
-                    HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-
                 byte[] encry = p.Encrypt(Encoding.UTF8.GetBytes(result), false);
+
+                byte[] sign = rsa.SignData(Encoding.UTF8.GetBytes(Command.Create(Id, target, Command.RecvMsg,
+                        Command.ByteArrayToString(encry))), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                 Client.GetStream()
                         .Write(Encoding.UTF8.GetBytes(Command.Create(Id, target, Command.RecvMsg,

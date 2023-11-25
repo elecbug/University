@@ -21,7 +21,7 @@ namespace PKI.Client.CA
             OnlyAccept = false;
 
             Console.WriteLine("You can provide to accept through [y/n].");
-            Console.WriteLine("Only provide to accept if you type " + Command.OnlyAccept[1..]);
+            Console.WriteLine("Only provide to accept if you type " + Command.OnlyAccept[1..] + ".");
         }
 
         public override async void ReadMethod(string text)
@@ -50,7 +50,8 @@ namespace PKI.Client.CA
                                 PublicKey = rsa.ExportRSAPublicKey(),
                             };
 
-                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text 
+                                + Command.ByteArrayToString(rsa.ExportRSAPrivateKey()))), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                             string data = Command.Create(Id, send, Command.RecvGenKey,
                                 Command.ByteArrayToString(rsa.ExportRSAPrivateKey()),
@@ -84,7 +85,8 @@ namespace PKI.Client.CA
                                 return;
                             }
 
-                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                            byte[] sign = UsingRSA.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(text 
+                                + pair!.Id + ":" + Command.ByteArrayToString(pair!.PublicKey))), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                             string data = Command.Create(Id, send, Command.RecvGetKey,
                                 pair!.Id + ":" + Command.ByteArrayToString(pair!.PublicKey),
