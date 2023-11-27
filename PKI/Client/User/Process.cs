@@ -123,10 +123,13 @@ namespace PKI.Client.User
                             return;
                         }
 
+                        byte[] data = Encoding.UTF8.GetBytes(Command.Create(int.Parse(split[0]), int.Parse(split[1]),
+                            split[2], split[3]));
+
                         RSACryptoServiceProvider p = new RSACryptoServiceProvider();
                         p.ImportRSAPublicKey(pair.PublicKey, out o);
 
-                        if (p.VerifyData(SHA256.HashData(Encoding.UTF8.GetBytes(text)), code,
+                        if (p.VerifyData(SHA256.HashData(data), code,
                             HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                         {
                             Console.WriteLine(" > This message is verifiy! But, you must check message time.");
@@ -173,7 +176,6 @@ namespace PKI.Client.User
                 catch (Exception ex)
                 {
                     Console.WriteLine("Invaild ID.");
-                    Console.WriteLine(ex);
 
                     return;
                 }
@@ -201,8 +203,8 @@ namespace PKI.Client.User
 
                 byte[] encry = p.Encrypt(Encoding.UTF8.GetBytes(result), false);
 
-                byte[] sign = rsa.SignData(Encoding.UTF8.GetBytes(Command.Create(Id, target, Command.RecvMsg,
-                        Command.ByteArrayToString(encry))), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+                byte[] sign = rsa.SignData(SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, target, Command.RecvMsg,
+                        Command.ByteArrayToString(encry)))), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                 Client.GetStream()
                         .Write(Encoding.UTF8.GetBytes(Command.Create(Id, target, Command.RecvMsg,
