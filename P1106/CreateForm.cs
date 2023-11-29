@@ -21,11 +21,9 @@ namespace P1106
             this.ProductLBox.DisplayMember = "Name";
             this.DetailLBox.Format += (s, e) =>
             {
-                using (OrderDbContext db = new OrderDbContext())
-                {
-                    e.Value = db.Products.Where(x => x.Id == (e.ListItem as PorderDetail)!.ProductId)
-                        .First().Name + (e.ListItem as PorderDetail)!.Quantity.ToString() + "개";
-                }
+                Viewer? view = e.ListItem as Viewer;
+
+                e.Value = view!.ProductName + " " + view!.Quantity + "개";
             };
         }
 
@@ -68,7 +66,7 @@ namespace P1106
 
                 db.SaveChanges();
 
-                this.DetailLBox.Items.Add(detail);
+                NameLBox_SelectedIndexChanged(sender, e);
             }
         }
 
@@ -78,17 +76,73 @@ namespace P1106
 
             using (OrderDbContext db = new OrderDbContext())
             {
-                var list = db.Porders.Where(x => x.MemberId == (this.NameLBox.SelectedItem as Member)!.Id);
+                var list = from i in db.PorderDetails
+                           join j in db.Porders
+                           on i.OrderId equals j.Id
+                           join k in db.Products
+                           on i.ProductId equals k.Id
+                           join l in db.Members
+                           on j.MemberId equals l.Id
+                           where (this.NameLBox.SelectedItem as Member)!.Id == l.Id
+                           select new Viewer
+                           {
+                               OrderId = j.Id,
+                               OrderDetailId = i.Id,
+                               ProductName = k.Name,
+                               Quantity = i.Quantity,
+                           };
+
+                //db.Porders.Where(x => x.MemberId == (this.NameLBox.SelectedItem as Member)!.Id);
 
                 foreach (var item in list)
                 {
-                    var sublist = db.PorderDetails.Where(x => x.OrderId == item.Id).ToList();
-                    foreach (var sub in sublist)
-                    {
-                        this.DetailLBox.Items.Add(sub);
-                    }
+                    this.DetailLBox.Items.Add(item);
                 }
             }
         }
+
+        private void DeleteBtn_Click(object sender, EventArgs e)
+        {
+            if (DetailLBox.SelectedItem != null)
+            {
+                Viewer item = (DetailLBox.SelectedItem as Viewer)!;
+
+                using (OrderDbContext db = new OrderDbContext())
+                {
+                    var q = from i in db.PorderDetails
+                            where i.Id == item.OrderDetailId
+                            select i;
+
+                    db.PorderDetails.Remove(q.First());
+
+                    var p = from i in db.Porders
+                            where i.Id == item.OrderId
+                            select i;
+
+                    db.Porders.Remove(p.First());
+
+                    db.SaveChanges();
+
+                    NameLBox_SelectedIndexChanged(sender, e);
+                }
+            }
+        }
+
+        private void AllDeleteBtn_Click(object sender, EventArgs e)
+        {
+            while (DetailLBox.Items.Count > 0)
+            {
+                DetailLBox.SelectedIndex = 0;
+                DeleteBtn_Click(sender, e);
+            }
+        }
+    }
+
+    class Viewer
+    {
+        public int OrderId { get; set; } = 0;
+        public int OrderDetailId { get; set; } = 0;
+        public string ProductName { get; set; } = "";
+        public int Quantity { get; set; } = 0;
     }
 }

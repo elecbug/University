@@ -130,6 +130,7 @@
             DeleteBtn.TabIndex = 3;
             DeleteBtn.Text = "선택 제거";
             DeleteBtn.UseVisualStyleBackColor = true;
+            DeleteBtn.Click += DeleteBtn_Click;
             // 
             // AllDeleteBtn
             // 
@@ -139,6 +140,7 @@
             AllDeleteBtn.TabIndex = 3;
             AllDeleteBtn.Text = "전체 제거";
             AllDeleteBtn.UseVisualStyleBackColor = true;
+            AllDeleteBtn.Click += AllDeleteBtn_Click;
             // 
             // CreateForm
             // 
