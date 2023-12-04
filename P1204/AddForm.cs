@@ -1,13 +1,19 @@
-﻿namespace CustomAddForm
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace P1204
 {
-    public class CustomAddForm : Form
+    public class AddForm : Form
     {
         public Pair[] Pairs { get; set; }
 
-        public CustomAddForm(params Pair[] pairs)
+        public AddForm(params Pair[] pairs)
         {
-            this.Pairs = new Pair[pairs.Length];
-            this.ClientSize = new Size(310, 10 + 30 * pairs.Length);
+            Pairs = new Pair[pairs.Length];
+            ClientSize = new Size(310, 10 + 30 * pairs.Length);
 
             for (int i = 0; i < pairs.Length; i++)
             {
@@ -21,7 +27,7 @@
                     TextAlign = ContentAlignment.TopRight,
                 };
 
-                this.Pairs[i] = pairs[i];
+                Pairs[i] = pairs[i];
 
                 pairs[i].Control.Parent = this;
                 pairs[i].Control.Visible = true;
@@ -29,7 +35,6 @@
                 pairs[i].Control.Size = new Size(200, 30);
             }
         }
-
     }
 
     public class Pair
@@ -44,23 +49,3 @@
         }
     }
 }
-
-/*
- * using e.g.
- * 
-            CustomAddForm form = new CustomAddForm(new Pair[]
-            {
-                new Pair("Name", new TextBox()),
-                new Pair("Address", new TextBox()),
-                new Pair("Birthday", new DateTimePicker()),
-                new Pair("ID", new TextBox()),
-                new Pair("Ok", new CheckBox()),
-            });
-
-            form.ShowDialog();
-
-            string name = form.Pairs.Where(x => x.LabelText == "Name").First().Control.Text;
-
-            MessageBox.Show(name);
- *
- */
