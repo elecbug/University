@@ -8,13 +8,26 @@ using System.Threading.Tasks;
 
 namespace PKI.Client.User
 {
+    /// <summary>
+    /// 유저 프로세스
+    /// </summary>
     public class Process : BaseProcess
     {
+        /// <summary>
+        /// CA의 공개키
+        /// </summary>
         private byte[] CaPublicKey { get; set; }
+        /// <summary>
+        /// 유저의 개인키
+        /// </summary>
         private byte[]? PersonalPrivateKey { get; set; }
 
+        /// <summary>
+        /// CA의 공개키를 받아 유저 형성
+        /// </summary>
+        /// <param name="pubKey"> CA의 공개키 </param>
         public Process(byte[] pubKey)
-            : base(new Random(DateTime.Now.Microsecond).Next(1, 1000), new TcpClient())
+            : base(new Random(DateTime.Now.Microsecond).Next(1, 10000), new TcpClient())
         {
             CaPublicKey = pubKey;
 
@@ -32,6 +45,7 @@ namespace PKI.Client.User
 
             switch (split[2])
             {
+                // 유저의 키 쌍 생성 요청 응답 받음
                 case Command.RecvGenKey:
                     {
                         byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GenerateKey)
@@ -58,6 +72,7 @@ namespace PKI.Client.User
                         break;
                     }
 
+                // 다른 유저의 공개키 요청 응답 받음
                 case Command.RecvGetKey:
                     {
                         byte[] sign = SHA256.HashData(Encoding.UTF8.GetBytes(Command.Create(Id, 0, Command.GetKey, 
@@ -89,6 +104,7 @@ namespace PKI.Client.User
 
                         break;
                     }
+                // 메세지를 받음
                 case Command.RecvMsg:
                     {
                         int o;
@@ -148,6 +164,7 @@ namespace PKI.Client.User
         {
             text = text.TrimEnd('\0');
 
+            // 유저의 공개키 요청
             if (text.Split(' ')[0] == Command.GetKey)
             {
                 try
@@ -160,6 +177,7 @@ namespace PKI.Client.User
                     Console.WriteLine("Invalid text.");
                 }
             }
+            // 메세지 전송 요청
             else if (text.Split(' ')[0] == Command.SendMsg)
             {
                 int o;
@@ -214,6 +232,7 @@ namespace PKI.Client.User
             {
                 switch (text)
                 {
+                    // 자신의 키 쌍 생성 요청
                     case Command.GenerateKey:
                         {
                             Client.GetStream()

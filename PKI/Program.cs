@@ -25,10 +25,12 @@ public class Program
             {
                 int num = int.Parse(Console.ReadLine()!);
 
+                // 웹 서버 형성
                 if (num == 0)
                 {
                     new WebServer().Run();
                 }
+                // CA 형성
                 else if (num == 1)
                 {
                     RSACryptoServiceProvider usingCA = new RSACryptoServiceProvider();
@@ -47,9 +49,11 @@ public class Program
                     
                     switch (num)
                     {
+                        // 유저 형성
                         case 2:
                             new PKI.Client.User.Process(data).Run();
                             break;
+                        // 옵저버 형성
                         case 3:
                             new PKI.Client.Observer.Process(data).Run();
                             break;

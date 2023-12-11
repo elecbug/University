@@ -10,11 +10,24 @@ using System.Threading.Tasks;
 
 namespace PKI.Client.CA
 {
+    /// <summary>
+    /// 공인 인증 기관
+    /// </summary>
     public class Process : BaseProcess
     {
+        /// <summary>
+        /// 인증 기관이 사용하는 RSA 키
+        /// </summary>
         private RSACryptoServiceProvider UsingRSA { get; set; }
+        /// <summary>
+        /// 모든 요청을 즉시 승인하는 지 여부
+        /// </summary>
         public bool OnlyAccept { get; private set; }
 
+        /// <summary>
+        /// CA 형성
+        /// </summary>
+        /// <param name="rsa"> 사용할 RSA 키 서비스 </param>
         public Process(RSACryptoServiceProvider rsa) : base(0, new TcpClient())
         {
             UsingRSA = rsa;
@@ -34,6 +47,7 @@ namespace PKI.Client.CA
 
             switch (split[2])
             {
+                // 키 생성 요청 응답
                 case Command.GenerateKey:
                     {
                         Console.WriteLine("The user [" + send + "] want to new RSA key. Accept?");
@@ -68,6 +82,7 @@ namespace PKI.Client.CA
                         }
                         break;
                     }
+                // 유저의 다른 유저 공개키 요청 응답
                 case Command.GetKey:
                     {
                         Console.WriteLine("The user [" + send + "] want to [" + split[3] + "]'s public key. Accept?");
@@ -107,6 +122,7 @@ namespace PKI.Client.CA
 
         public override void WriteMethod(string text)
         {
+            // 항상 승인 모드
             if (text == Command.OnlyAccept)
             {
                 OnlyAccept = true;

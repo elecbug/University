@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PKI.Client.Observer
 {
+    /// <summary>
+    /// 모든 패킷을 캡쳐 할 수 있는 옵저버
+    /// </summary>
     public class Process : BaseProcess
     {
         private byte[] CaPublicKey { get; set; }
