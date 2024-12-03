@@ -1,0 +1,6 @@
+mov sum 0
+mov n 10
+add sum n
+sub n 1
+jn0 n 2
+prt sum 0

@@ -1,0 +1,15 @@
+Name: aa09
+Grade: 0
+Time: Tue Dec 13 18:09:41 KST 2022
+Win: False
+
+Name: abcd
+Grade: 900
+Time: Mon Dec 12 22:53:26 KST 2022
+Win: True
+
+Name: abc
+Grade: 200
+Time: Mon Dec 12 22:51:48 KST 2022
+Win: False
+
